@@ -473,11 +473,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/macbookair/SANATIFY/SANATIFY/SANATIFY/SANATIFY.csproj",
+      "projectUniqueName": "/Users/macbookair/test/Sanatify/SANATIFY/SANATIFY.csproj",
       "projectName": "SANATIFY",
-      "projectPath": "/Users/macbookair/SANATIFY/SANATIFY/SANATIFY/SANATIFY.csproj",
+      "projectPath": "/Users/macbookair/test/Sanatify/SANATIFY/SANATIFY.csproj",
       "packagesPath": "/Users/macbookair/.nuget/packages/",
-      "outputPath": "/Users/macbookair/SANATIFY/SANATIFY/SANATIFY/obj/",
+      "outputPath": "/Users/macbookair/test/Sanatify/SANATIFY/obj/",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
