@@ -1,22 +1,131 @@
 html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    background-image: url("temp2.jpeg");
 }
 
 body {
-  margin-bottom: 60px;
+    background-color: rgba(12, 10, 10, 0.87);
+    color: #FFFFFF;
+    font-family: 'Roboto', sans-serif;
+}
+
+a {
+    color: #1DB954;
+}
+
+a:hover {
+    color: #1DB954;
+    text-decoration: none;
+}
+
+/* Sticky Navbar */
+.navbar {
+    background-color: #1DB954;
+}
+
+.bg-dark, .bg-dark-custom {
+    background-color: #070707;
+    opacity: 90%;
+}
+
+.navbar-brand, .nav-link {
+    color: #FFFFFF;
+}
+
+.navbar-brand:hover, .nav-link:hover {
+    color: #1ED760;
+}
+
+.sticky-top {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+}
+
+/* Sidebar */
+.sidebar {
+    height: 100vh;
+    position: fixed;
+    top: 56px; /* Height of the navbar */
+    left: 0;
+    z-index: 100;
+    padding-top: 20px;
+    background-color: #000000;
+}
+
+.sidebar-sticky {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 56px; /* Height of the navbar */
+    height: calc(100vh - 56px);
+    padding-top: 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.nav-link {
+    font-size: 1.1em;
+    margin: 10px 0;
+    color: #b3b3b3;
+}
+
+.nav-link:hover {
+    color: #FFFFFF;
+}
+
+main {
+    margin-left: 220px;
+    padding: 20px;
+}
+
+.footer {
+    background-color: #181818;
+    color: #b3b3b3;
+}
+
+.footer a {
+    color: #1DB954;
+}
+
+.footer a:hover {
+    color: #1ED760;
+}
+
+.home-page, .browse-page, .library-page {
+    padding: 20px;
+}
+
+.player {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #181818;
+    color: #b3b3b3;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem #fff, 0 0 0 0.25rem #007bff;
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+.form-container {
+    background-color: rgb(29 29 30 / 66%);
+    border-radius: 15px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    width: 388px;
+    text-align: center;
+    padding: 62px 17px 72px 20px;
+    margin-top: 10px;
+    margin-left: 373px;
 }
