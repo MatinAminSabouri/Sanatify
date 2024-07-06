@@ -45,7 +45,7 @@ namespace SANATIFY.Controllers
 
                 _context.ExecuteNonQuery(query, parameters);
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("DisplayAllMusics", "Music");
             }
 
             return View(model);
@@ -74,7 +74,7 @@ namespace SANATIFY.Controllers
 
                 if (result.Rows.Count > 0 && (int)result.Rows[0][0] > 0)
                 {
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("DisplayAllMusics", "Music");
                 }
                 else
                 {

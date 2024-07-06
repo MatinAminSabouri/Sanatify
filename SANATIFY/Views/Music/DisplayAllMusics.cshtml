@@ -1,0 +1,31 @@
+@model IEnumerable<SANATIFY.Models.MusicViewModel>
+
+@{
+    ViewData["Title"] = "All Musics";
+}
+
+<div class="container mt-4">
+    <h2>All Musics</h2>
+    <div class="row">
+        @foreach (var music in Model)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@music.Name</h5>
+                        <p class="card-text">
+                            <strong>Artist ID:</strong> @music.Person_ID<br/>
+                            <strong>Genre ID:</strong> @music.Genre_ID<br/>
+                            @* <strong>Region:</strong> @music.Region<br/> *@
+                            <strong>Ages:</strong> @music.Ages?.ToString()<br/>
+                            <strong>Date:</strong> @music.Date.ToString("yyyy-MM-dd")<br/>
+                            @* <strong>Lyrics:</strong> @music.Text<br/> *@
+                            @* <strong>Playlist Allowed:</strong> @music.Playlist_Allow<br/> *@
+                            <strong>Cover:</strong> @music.Cover
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
