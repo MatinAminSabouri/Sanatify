@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using SANATIFY.Data;
 using SANATIFY.Models;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace SANATIFY.Controllers
@@ -7,10 +9,12 @@ namespace SANATIFY.Controllers
     public class UserController : Controller
     {
         private readonly IConfiguration _configuration;
+        private readonly AppDbContext _context;
 
         public UserController(IConfiguration configuration)
         {
             _configuration = configuration;
+            _context = new AppDbContext(_configuration.GetConnectionString("DefaultConnection"));
         }
 
         [HttpGet]
@@ -24,26 +28,22 @@ namespace SANATIFY.Controllers
         {
             if (ModelState.IsValid)
             {
-                string connectionString = _configuration.GetConnectionString("DefaultConnection");
+                string query =
+                    "INSERT INTO Person (UserName, Password, Email, Country, State, City, Kind_ID, Wallet) " +
+                    "VALUES (@Username, @Password, @Email, @Country, @State, @City, @Kind, 100)";
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                SqlParameter[] parameters = new SqlParameter[]
                 {
-                    string query = "INSERT INTO Person (UserName, Password, Email, Country, State, City, Kind_ID, Wallet) " +
-                                   "VALUES (@Username, @Password, @Email, @Country, @State, @City, @Kind, 0)";
+                    new SqlParameter("@Username", model.Username),
+                    new SqlParameter("@Password", model.Password),
+                    new SqlParameter("@Email", model.Email),
+                    new SqlParameter("@Country", model.Country),
+                    new SqlParameter("@State", model.State),
+                    new SqlParameter("@City", model.City),
+                    new SqlParameter("@Kind", model.Kind)
+                };
 
-                    SqlCommand command = new SqlCommand(query, connection);
-                    command.Parameters.AddWithValue("@Username", model.Username);
-                    command.Parameters.AddWithValue("@Password", model.Password);
-                    command.Parameters.AddWithValue("@Email", model.Email);
-                    command.Parameters.AddWithValue("@Country", model.Country);
-                    command.Parameters.AddWithValue("@State", model.State);
-                    command.Parameters.AddWithValue("@City", model.City);
-                    command.Parameters.AddWithValue("@Kind", model.Kind);
-
-                    connection.Open();
-                    command.ExecuteNonQuery();
-                    connection.Close();
-                }
+                _context.ExecuteNonQuery(query, parameters);
 
                 return RedirectToAction("Index", "Home");
             }
@@ -62,28 +62,23 @@ namespace SANATIFY.Controllers
         {
             if (ModelState.IsValid)
             {
-                string connectionString = _configuration.GetConnectionString("DefaultConnection");
+                string query = "SELECT COUNT(*) FROM Person WHERE UserName = @Username AND Password = @Password";
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                SqlParameter[] parameters = new SqlParameter[]
                 {
-                    string query = "SELECT COUNT(*) FROM Person WHERE UserName = @Username AND Password = @Password";
+                    new SqlParameter("@Username", model.Username),
+                    new SqlParameter("@Password", model.Password)
+                };
 
-                    SqlCommand command = new SqlCommand(query, connection);
-                    command.Parameters.AddWithValue("@Username", model.Username);
-                    command.Parameters.AddWithValue("@Password", model.Password);
+                DataTable result = _context.ExecuteQuery(query, parameters);
 
-                    connection.Open();
-                    int userCount = (int)command.ExecuteScalar();
-                    connection.Close();
-
-                    if (userCount > 0)
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
-                    else
-                    {
-                        return RedirectToAction("Privacy", "Home");
-                    }
+                if (result.Rows.Count > 0 && (int)result.Rows[0][0] > 0)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                 }
             }
 
