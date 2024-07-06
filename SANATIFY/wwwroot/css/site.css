@@ -129,3 +129,7 @@ main {
     margin-top: 10px;
     margin-left: 373px;
 }
+
+.custom-card {
+    width: 215%;
+}

@@ -10,19 +10,73 @@
         @foreach (var music in Model)
         {
             <div class="col-md-4 mb-3">
-                <div class="card">
-                    <div class="card-body">
+                <div class="card" style="background-color: rgba(12,12,12,0.17)">
+                    <div class="custom-card">
+                        <div class="col-md-4 mb-4">
+                            @if (@music.Cover == 1)
+                            {
+                                <img src="~/css/covers/1.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 2)
+                            {
+                                <img src="~/css/covers/2.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 3)
+                            {
+                                <img src="~/css/covers/3.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 4)
+                            {
+                                <img src="~/css/covers/4.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 5)
+                            {
+                                <img src="~/css/covers/5.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 6)
+                            {
+                                <img src="~/css/covers/6.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 7)
+                            {
+                                <img src="~/css/covers/7.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 8)
+                            {
+                                <img src="~/css/covers/8.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 9)
+                            {
+                                <img src="~/css/covers/9.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 10)
+                            {
+                                <img src="~/css/covers/10.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            else
+                            {
+                                <img src="~/css/covers/4.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                        </div>
+
                         <h5 class="card-title">@music.Name</h5>
                         <p class="card-text">
-                            <strong>Artist ID:</strong> @music.Person_ID<br/>
-                            <strong>Genre ID:</strong> @music.Genre_ID<br/>
+                            <div>
+                                <strong>Artist ID:</strong> @music.Person_ID
+                                <strong>Genre ID:</strong> @music.Genre_ID
+                            </div>
                             @* <strong>Region:</strong> @music.Region<br/> *@
-                            <strong>Ages:</strong> @music.Ages?.ToString()<br/>
-                            <strong>Date:</strong> @music.Date.ToString("yyyy-MM-dd")<br/>
+                            <strong>Ages:</strong> @music.Ages?.ToString()
+                            <strong>Date:</strong> @music.Date.ToString("yyyy-MM-dd")
                             @* <strong>Lyrics:</strong> @music.Text<br/> *@
                             @* <strong>Playlist Allowed:</strong> @music.Playlist_Allow<br/> *@
-                            <strong>Cover:</strong> @music.Cover
+                            <div class="card-footer d-flex justify-content-between">
+                                <button class="btn btn-success">
+                                    Add to Fav
+                                </button>
+                            </div>
                         </p>
+
                     </div>
                 </div>
             </div>
