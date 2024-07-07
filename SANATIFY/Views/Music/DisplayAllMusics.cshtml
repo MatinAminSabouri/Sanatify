@@ -9,6 +9,7 @@
     <div class="row">
         @foreach (var music in Model)
         {
+            <input type="hidden" id="userId" value="@User.Identity.Name"/>
             <div class="col-md-4 mb-3">
                 <div class="card" style="background-color: rgba(12,12,12,0.17)">
                     <div class="custom-card">
@@ -70,7 +71,7 @@
                             <strong>Date:</strong> @music.Date.ToString("yyyy-MM-dd")
                             @* <strong>Lyrics:</strong> @music.Text<br/> *@
                             @* <strong>Playlist Allowed:</strong> @music.Playlist_Allow<br/> *@
-                            <div class="card-footer d-flex justify-content-between">
+                            <div class="card-footer d-flex justify-content-between"   onclick="addToFavorites('@music.ID')">
                                 <button class="btn btn-success">
                                     Add to Fav
                                 </button>
@@ -83,3 +84,25 @@
         }
     </div>
 </div>
+
+<script>
+    function addToFavorites(musicId) {
+            console.log("Adding Song to favorites...");
+        $.ajax({
+            type: "POST",
+            url: "/User/AddtoLikeSong",
+            data: { musicId: musicId}, 
+            dataType: "json",
+            success: function (result) {
+                if (result.success) {
+                    alert("song added to Liked songs!");
+                } else {
+                    alert("Failed to add song to Liked songs.");
+                }
+            },
+            error: function () {
+                alert("An error occurred while adding the song to favorites.");
+            }
+        });
+    }
+</script>

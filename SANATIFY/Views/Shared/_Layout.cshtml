@@ -25,6 +25,9 @@
                     <li class="nav-item">
                         <a class="nav-link text-light" asp-area="" asp-controller="User" asp-action="Login">Login</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light" asp-area="" asp-controller="User" asp-action="ArtistLogin">Artists</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -54,7 +57,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-light" asp-area="" asp-controller="User" asp-action="LikedSongs">
+                        <a class="nav-link text-light" asp-area="" asp-controller="User" asp-action="AddToLikeSong">
                             <span data-feather="shopping-cart"></span>
                             Liked Songs
                         </a>
@@ -68,12 +71,6 @@
         </main>
     </div>
 </div>
-
-@* <footer class="footer mt-auto py-3 bg-dark"> *@
-@*     <div class="container"> *@
-@*         <span class="text-muted">&copy; 1403 - SANATIFY - <a href="#" class="text-light">Privacy</a></span> *@
-@*     </div> *@
-@* </footer> *@
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
