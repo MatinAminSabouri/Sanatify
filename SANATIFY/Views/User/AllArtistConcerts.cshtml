@@ -1,0 +1,25 @@
+@model IEnumerable<SANATIFY.Models.ConcertViewModel>
+@{
+    ViewData["Title"] = "All Artist Concerts";
+}
+
+<div class="centered-container">
+    <h2>All Concerts</h2>
+    <table class="table table-light table-bordered table-primary table-responsive table-striped">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var concert in Model)
+        {
+            <tr>
+                <td>@concert.Date.ToString("d")</td>
+                <td>@concert.Price</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

@@ -208,5 +208,34 @@ namespace SANATIFY.Controllers
 
             return View(model);
         }
+
+        [HttpGet]
+        public IActionResult AllArtistConcerts()
+        {
+            int personId = _userService.GetUserId(usreName);
+            var concerts = GetConcertsByUserId(personId);
+            return View(concerts);
+        }
+
+        private List<ConcertViewModel> GetConcertsByUserId(int userId)
+        {
+            string query = "SELECT ID, Date, Price FROM Concert WHERE Person_ID = @Person_ID";
+            var parameters = new[] { new SqlParameter("@Person_ID", userId) };
+            DataTable result = _context.ExecuteQuery(query, parameters);
+
+            var concerts = new List<ConcertViewModel>();
+
+            foreach (DataRow row in result.Rows)
+            {
+                concerts.Add(new ConcertViewModel
+                {
+                    ID = Convert.ToInt32(row["ID"]),
+                    Date = Convert.ToDateTime(row["Date"]),
+                    Price = Convert.ToInt32(row["Price"])
+                });
+            }
+
+            return concerts;
+        }
     }
 }

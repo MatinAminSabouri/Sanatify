@@ -42,6 +42,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlci9BZGRNdXNpYy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/macbookair/test/Sanatify/SANATIFY/Views/User/AllArtistConcerts.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlci9BbGxBcnRpc3RDb25jZXJ0cy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/macbookair/test/Sanatify/SANATIFY/Views/User/ArtistDashboard.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlci9BcnRpc3REYXNoYm9hcmQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
