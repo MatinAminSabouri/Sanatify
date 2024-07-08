@@ -38,6 +38,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/macbookair/test/Sanatify/SANATIFY/Views/User/AddMusic.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlci9BZGRNdXNpYy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/macbookair/test/Sanatify/SANATIFY/Views/User/ArtistDashboard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlci9BcnRpc3REYXNoYm9hcmQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/macbookair/test/Sanatify/SANATIFY/Views/User/ArtistLogin.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlci9BcnRpc3RMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
