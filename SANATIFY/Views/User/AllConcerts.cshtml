@@ -1,7 +1,10 @@
-@model IEnumerable<SANATIFY.Models.ConcertViewModel>
+@model List<SANATIFY.Models.ConcertViewModel>
+
 @{
-    ViewData["Title"] = "All Artist Concerts";
+    ViewData["Title"] = "All Concerts";
 }
+
+<h3>Your Current Credit: @ViewBag.UserCredit</h3>
 
 <div class="centered-container">
     <h2>All Concerts</h2>
@@ -11,7 +14,6 @@
             <th>Concert Id</th>
             <th>Date</th>
             <th>Price</th>
-            <th>Status</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -23,26 +25,15 @@
                 <td>@concert.Date.ToString("d")</td>
                 <td>@concert.Price</td>
                 <td>
-                    @if (concert.Valid)
+                    @if (concert.Valid && ViewBag.UserCredit >= concert.Price)
                     {
-                        <span>Available</span>
-                    }
-                    else
-                    {
-                        <span>Cancelled</span>
-                    }
-                </td>
-                <td>
-                    @if (concert.Valid)
-                    {
-                        <form method="post" asp-action="CancelConcert" asp-controller="User">
-                            <input type="hidden" name="concertId" value="@concert.ID" />
-                            <button type="submit" class="btn btn-danger">Cancel</button>
+                        <form asp-action="BuyTicket" asp-route-concertId="@concert.ID" method="post">
+                            <button type="submit" class="btn btn-primary">Buy Ticket</button>
                         </form>
                     }
                     else
                     {
-                        <span>Cancelled</span>
+                        <span class="text-danger">Not Available</span>
                     }
                 </td>
             </tr>

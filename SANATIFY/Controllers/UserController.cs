@@ -96,7 +96,7 @@ namespace SANATIFY.Controllers
                     }
                     else
                     {
-                        return RedirectToAction("DisplayAllMusics", "Music");
+                        return RedirectToAction("UserDashboard", "User");
                     }
                 }
                 else
@@ -219,7 +219,7 @@ namespace SANATIFY.Controllers
 
         private List<ConcertViewModel> GetConcertsByUserId(int userId)
         {
-            string query = "SELECT ID, Date, Price FROM Concert WHERE Person_ID = @Person_ID";
+            string query = "SELECT ID, Date, Price, Valid FROM Concert WHERE Person_ID = @Person_ID";
             var parameters = new[] { new SqlParameter("@Person_ID", userId) };
             DataTable result = _context.ExecuteQuery(query, parameters);
 
@@ -231,11 +231,110 @@ namespace SANATIFY.Controllers
                 {
                     ID = Convert.ToInt32(row["ID"]),
                     Date = Convert.ToDateTime(row["Date"]),
-                    Price = Convert.ToInt32(row["Price"])
+                    Price = Convert.ToInt32(row["Price"]),
+                    Valid = Convert.ToBoolean(row["Valid"])
                 });
             }
 
             return concerts;
+        }
+
+        [HttpPost]
+        public IActionResult CancelConcert(int concertId)
+        {
+            string query = "UPDATE Concert SET Valid = 0 WHERE ID = @ConcertId AND Person_ID = @Person_ID";
+            var parameters = new[]
+            {
+                new SqlParameter("@ConcertId", concertId),
+                new SqlParameter("@Person_ID", userId)
+            };
+
+            _context.ExecuteNonQuery(query, parameters);
+
+            return RedirectToAction("AllArtistConcerts");
+        }
+
+        [HttpGet]
+        public IActionResult AllConcerts()
+        {
+            string query = "SELECT ID, Date, Price, Valid FROM Concert WHERE Valid = 1";
+            DataTable result = _context.ExecuteQuery(query, new SqlParameter[0]);
+
+            
+            List<ConcertViewModel> concerts = new List<ConcertViewModel>();
+
+            decimal credit = _userService.GetUserCredit(usreName);
+            ViewBag.UserCredit = credit;
+
+
+            foreach (DataRow row in result.Rows)
+            {
+                concerts.Add(new ConcertViewModel
+                {
+                    ID = (int)row["ID"],
+                    Date = (DateTime)row["Date"],
+                    Price = (int)row["Price"],
+                    Valid = (bool)row["Valid"]
+                });
+            }
+
+            return View(concerts);
+        }
+
+        public IActionResult UserDashboard()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult BuyTicket(int concertId)
+        {
+            string query = "SELECT Person_ID, Price, Valid FROM Concert WHERE ID = @ConcertId";
+            var parameters = new[]
+            {
+                new SqlParameter("@ConcertId", concertId)
+            };
+
+            DataTable result = _context.ExecuteQuery(query, parameters);
+
+            if (result.Rows.Count > 0)
+            {
+                int personId = _userService.GetUserId(usreName);
+                int concertPrice = (int)result.Rows[0]["Price"];
+                bool isValid = (bool)result.Rows[0]["Valid"];
+
+                // Check if the user has enough credit and the concert is valid
+                decimal userCredit = _userService.GetUserCredit(usreName);
+
+                if (userCredit >= concertPrice && isValid)
+                {
+
+                    decimal newCredit = userCredit - concertPrice;
+                    _userService.UpdateUserCredit(usreName, newCredit);
+
+
+                    string insertQuery = "INSERT INTO Ticket (Person_ID, Concert_ID) VALUES (@Person_ID, @Concert_ID)";
+                    SqlParameter[] insertParams = new SqlParameter[]
+                    {
+                        new SqlParameter("@Person_ID", personId),
+                        new SqlParameter("@Concert_ID", concertId)
+                    };
+
+                    _context.ExecuteNonQuery(insertQuery, insertParams);
+
+                    return RedirectToAction("AllConcerts");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Insufficient credit or concert is not valid.");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Concert not found.");
+            }
+
+            return RedirectToAction("AllConcerts");
         }
     }
 }

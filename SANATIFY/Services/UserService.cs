@@ -74,6 +74,34 @@ namespace SANATIFY.Services
                 throw new Exception("User not found.");
             }
         }
+        public int GetUserCredit(string username)
+        {
+            string query = "SELECT Wallet FROM Person WHERE UserName = @Username";
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@Username", username)
+            };
+
+            DataTable result = _appDbContext.ExecuteQuery(query, parameters);
+
+            if (result.Rows.Count > 0)
+            {
+                return (int)result.Rows[0]["Wallet"];
+            }
+
+            throw new Exception("User not found.");
+        }
+        public void UpdateUserCredit(string username, decimal newCredit)
+        {
+            string query = "UPDATE Person SET Wallet = @NewCredit WHERE UserName = @Username";
+            var parameters = new SqlParameter[]
+            {
+                new SqlParameter("@NewCredit", newCredit),
+                new SqlParameter("@Username", username)
+            };
+
+            _appDbContext.ExecuteNonQuery(query, parameters);
+        }
 
     }
 }
