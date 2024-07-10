@@ -86,23 +86,26 @@
 </div>
 
 <script>
-    function addToFavorites(musicId) {
-            console.log("Adding Song to favorites...");
-        $.ajax({
-            type: "POST",
-            url: "/User/AddtoLikeSong",
-            data: { musicId: musicId}, 
-            dataType: "json",
-            success: function (result) {
-                if (result.success) {
-                    alert("song added to Liked songs!");
-                } else {
-                    alert("Failed to add song to Liked songs.");
-                }
-            },
-            error: function () {
-                alert("An error occurred while adding the song to favorites.");
+function addToFavorites(musicId) {
+    console.log("Adding Song to favorites...");
+    $.ajax({
+        type: "POST",
+        url: "/User/AddToLikeSong",
+        data: { musicId: musicId}, 
+        dataType: "json",
+        success: function (result) {
+            if (result.success) {
+                alert("Song added to Liked songs!");
+            } else if (result.message === "Song already liked.") {
+                alert("You have already liked this song.");
+            } else {
+                alert("Failed to add song to Liked songs.");
             }
-        });
-    }
+        },
+        error: function () {
+            alert("An error occurred while adding the song to favorites.");
+        }
+    });
+}
+
 </script>

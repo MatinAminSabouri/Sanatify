@@ -137,22 +137,46 @@ namespace SANATIFY.Controllers
 
             return View(model);
         }
-
+        
         [HttpPost]
         public IActionResult AddToLikeSong(int musicId)
         {
-            int personId = userId;
-            string query = "INSERT INTO Like_Music (Music_ID, Person_ID) VALUES (@Music_ID, @Person_ID)";
-            var parameters = new[]
+            try
             {
-                new SqlParameter("@Music_ID", musicId),
-                new SqlParameter("@Person_ID", personId)
-            };
+                int personId = _userService.GetUserId(usreName);
 
-            _context.ExecuteNonQuery(query, parameters);
-            return RedirectToAction("Index", "Home");
+                // Check if the song is already liked by the user
+                string checkQuery = "SELECT COUNT(*) FROM Like_Music WHERE Music_ID = @Music_ID AND Person_ID = @Person_ID";
+                var checkParameters = new[]
+                {
+                    new SqlParameter("@Music_ID", musicId),
+                    new SqlParameter("@Person_ID", personId)
+                };
+                DataTable checkResult = _context.ExecuteQuery(checkQuery, checkParameters);
+
+                if (checkResult.Rows.Count > 0 && (int)checkResult.Rows[0][0] > 0)
+                {
+                    // Song is already liked by the user
+                    return Json(new { success = false, message = "Song already liked." });
+                }
+
+                // Add the song to the user's likes
+                string query = "INSERT INTO Like_Music (Music_ID, Person_ID) VALUES (@Music_ID, @Person_ID)";
+                var parameters = new[]
+                {
+                    new SqlParameter("@Music_ID", musicId),
+                    new SqlParameter("@Person_ID", personId)
+                };
+
+                _context.ExecuteNonQuery(query, parameters);
+                return Json(new { success = true });
+            }
+            catch (Exception)
+            {
+                return Json(new { success = false, message = "An error occurred." });
+            }
         }
-        
+
         public IActionResult Library()
         {
             throw new NotImplementedException();
