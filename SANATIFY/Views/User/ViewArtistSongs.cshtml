@@ -83,7 +83,6 @@
 
 <script>
     function addToFavorites(musicId) {
-        console.log("Adding Song to favorites...");
         $.ajax({
             type: "POST",
             url: "/User/AddToLikeSong",
