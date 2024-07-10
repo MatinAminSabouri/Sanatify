@@ -152,12 +152,7 @@ namespace SANATIFY.Controllers
             _context.ExecuteNonQuery(query, parameters);
             return RedirectToAction("Index", "Home");
         }
-
-        public IActionResult Browse()
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public IActionResult Library()
         {
             throw new NotImplementedException();
@@ -336,5 +331,37 @@ namespace SANATIFY.Controllers
 
             return RedirectToAction("AllConcerts");
         }
+        public IActionResult Browse()
+        {
+            var users = _userService.GetAllUsers();
+            return View(users);
+        }
+        public IActionResult BrowseArtists()
+        {
+            var artists = _userService.GetAllArtists();
+            return View(artists);
+        }
+
+        [HttpPost]
+        public IActionResult SendFriendRequest(int receiverId)
+        {
+            int senderId = _userService.GetUserId(usreName);
+            _userService.SendFriendRequest(senderId, receiverId);
+            return RedirectToAction("Browse");
+        }
+
+        [HttpPost]
+        public IActionResult FollowUser(int followingId)
+        {
+            int followerId = _userService.GetUserId(usreName);
+            _userService.FollowUser(followerId, followingId);
+            return RedirectToAction("Browse");
+        }
+        public IActionResult ViewArtistSongs(int artistId)
+        {
+            var songs = _userService.GetSongsByArtist(artistId);
+            return View(songs);
+        }
+
     }
 }

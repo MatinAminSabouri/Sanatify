@@ -1,6 +1,7 @@
 using System.Data;
 using System.Data.SqlClient;
 using SANATIFY.Data;
+using SANATIFY.Models;
 
 namespace SANATIFY.Services
 {
@@ -102,6 +103,94 @@ namespace SANATIFY.Services
 
             _appDbContext.ExecuteNonQuery(query, parameters);
         }
+        public void SendFriendRequest(int senderId, int receiverId)
+        {
+            string query = "INSERT INTO Freind_Req (Person_Sender_ID, Person_Rec_ID, Accept, State, Date) " +
+                           "VALUES (@SenderId, @ReceiverId, 0, 1, @Date)";
+            var parameters = new SqlParameter[]
+            {
+                new SqlParameter("@SenderId", senderId),
+                new SqlParameter("@ReceiverId", receiverId),
+                new SqlParameter("@Date", DateTime.Now)
+            };
 
+            _appDbContext.ExecuteNonQuery(query, parameters);
+        }
+
+        public void FollowUser(int followerId, int followingId)
+        {
+            string query = "INSERT INTO Following (Person_Follower_ID, Person_Following_ID) " +
+                           "VALUES (@FollowerId, @FollowingId)";
+            var parameters = new SqlParameter[]
+            {
+                new SqlParameter("@FollowerId", followerId),
+                new SqlParameter("@FollowingId", followingId)
+            };
+
+            _appDbContext.ExecuteNonQuery(query, parameters);
+        }
+        public List<UserViewModel> GetAllUsers()
+        {
+            string query = "SELECT ID, UserName, Email FROM Person";
+            DataTable result = _appDbContext.ExecuteQuery(query, new SqlParameter[0]);
+
+            List<UserViewModel> users = new List<UserViewModel>();
+
+            foreach (DataRow row in result.Rows)
+            {
+                users.Add(new UserViewModel
+                {
+                    ID = (int)row["ID"],
+                    UserName = row["UserName"].ToString(),
+                    Email = row["Email"].ToString()
+                });
+            }
+
+            return users;
+        }
+        public List<UserViewModel> GetAllArtists()
+        {
+            string query = "SELECT ID, UserName, Email FROM Person WHERE Kind_ID = 2";
+            DataTable result = _appDbContext.ExecuteQuery(query, new SqlParameter[0]);
+
+            List<UserViewModel> artists = new List<UserViewModel>();
+
+            foreach (DataRow row in result.Rows)
+            {
+                artists.Add(new UserViewModel
+                {
+                    ID = (int)row["ID"],
+                    UserName = row["UserName"].ToString(),
+                    Email = row["Email"].ToString()
+                });
+            }
+
+            return artists;
+        }
+
+        public List<MusicViewModel> GetSongsByArtist(int artistId)
+        {
+            string query = "SELECT ID, Name, Genre_ID, Cover FROM Music WHERE Person_ID = @ArtistId";
+            var parameters = new SqlParameter[]
+            {
+                new SqlParameter("@ArtistId", artistId)
+            };
+            DataTable result = _appDbContext.ExecuteQuery(query, parameters);
+
+            List<MusicViewModel> songs = new List<MusicViewModel>();
+
+            foreach (DataRow row in result.Rows)
+            {
+                songs.Add(new MusicViewModel
+                {
+                    ID = (int)row["ID"],
+                    Name = row["Name"].ToString(),
+                    Genre_ID = (int)row["Genre_ID"],
+                    Cover = (int)row["Cover"]
+                });
+            }
+
+            return songs;
+        }
     }
 }
