@@ -136,6 +136,7 @@ main {
 .custom-dashboard{
     background-color: rgb(185 212 178 / 92%);
 }
-.sidebar{
-    background-color: #fffbfb00;
+.sidebar {
+    background-color: #0f0e13;
+    width: 165px;
 }
