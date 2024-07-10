@@ -1,0 +1,38 @@
+@model IEnumerable<SANATIFY.Models.UserViewModel>
+@{
+    ViewData["Title"] = "Browse Users";
+}
+
+<div class="centered-container">
+    <h2>All Users</h2>
+    <table class="table table-light table-bordered table-primary table-responsive table-striped">
+        <thead>
+        <tr>
+            <th>User ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.ID</td>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+                <td>
+                    <form method="post" asp-action="SendFriendRequest">
+                        <input type="hidden" name="receiverId" value="@user.ID" />
+                        <button type="submit" class="btn btn-primary">Send Friend Request</button>
+                    </form>
+                    <form method="post" asp-action="FollowUser">
+                        <input type="hidden" name="followingId" value="@user.ID" />
+                        <button type="submit" class="btn btn-secondary">Follow</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

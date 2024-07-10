@@ -1,0 +1,40 @@
+@model IEnumerable<SANATIFY.Models.UserViewModel>
+@{
+    ViewData["Title"] = "Browse Artists";
+}
+
+<div class="centered-container">
+    <h2>All Artists</h2>
+    <table class="table table-light table-bordered table-primary table-responsive table-striped">
+        <thead>
+        <tr>
+            <th>Artist Name</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var artist in Model)
+        {
+            <tr>
+                <td>@artist.UserName</td>
+                <td>@artist.Email</td>
+                <td>
+                    <form method="post" asp-action="SendFriendRequest">
+                        <input type="hidden" name="receiverId" value="@artist.ID" />
+                        <button type="submit" class="btn btn-primary">Send Friend Request</button>
+                    </form>
+                    <form method="post" asp-action="FollowUser">
+                        <input type="hidden" name="followingId" value="@artist.ID" />
+                        <button type="submit" class="btn btn-secondary">Follow</button>
+                    </form>
+                    <form method="get" asp-action="ViewArtistSongs">
+                        <input type="hidden" name="artistId" value="@artist.ID" />
+                        <button type="submit" class="btn btn-info">View Songs</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
