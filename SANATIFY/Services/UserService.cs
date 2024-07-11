@@ -55,8 +55,9 @@ namespace SANATIFY.Services
                 return (int)result.Rows[0]["Kind_ID"];
             }
 
-            return -1; 
+            return -1;
         }
+
         public int GetUserId(string username)
         {
             string query = "SELECT ID FROM Person WHERE UserName = @Username";
@@ -75,6 +76,7 @@ namespace SANATIFY.Services
                 throw new Exception("User not found.");
             }
         }
+
         public int GetUserCredit(string username)
         {
             string query = "SELECT Wallet FROM Person WHERE UserName = @Username";
@@ -92,6 +94,7 @@ namespace SANATIFY.Services
 
             throw new Exception("User not found.");
         }
+
         public void UpdateUserCredit(string username, decimal newCredit)
         {
             string query = "UPDATE Person SET Wallet = @NewCredit WHERE UserName = @Username";
@@ -103,7 +106,7 @@ namespace SANATIFY.Services
 
             _appDbContext.ExecuteNonQuery(query, parameters);
         }
- 
+
         public void FollowUser(int followerId, int followingId)
         {
             string query = "INSERT INTO Following (Person_Follower_ID, Person_Following_ID) " +
@@ -116,6 +119,7 @@ namespace SANATIFY.Services
 
             _appDbContext.ExecuteNonQuery(query, parameters);
         }
+
         public List<UserViewModel> GetAllUsers()
         {
             string query = "SELECT ID, UserName, Email FROM Person";
@@ -135,6 +139,7 @@ namespace SANATIFY.Services
 
             return users;
         }
+
         public List<UserViewModel> GetAllArtists()
         {
             string query = "SELECT ID, UserName, Email FROM Person WHERE Kind_ID = 2";
@@ -179,9 +184,11 @@ namespace SANATIFY.Services
 
             return songs;
         }
+
         public void SendFriendRequest(int senderId, int receiverId)
         {
-            string query = "INSERT INTO Friend_Req (Person_Sender_ID, Person_Rec_ID, Accept, State, Date) VALUES (@SenderId, @ReceiverId, 0, 0, @Date)";
+            string query =
+                "INSERT INTO Friend_Req (Person_Sender_ID, Person_Rec_ID, Accept, State, Date) VALUES (@SenderId, @ReceiverId, 0, 0, @Date)";
             var parameters = new[]
             {
                 new SqlParameter("@SenderId", senderId),
@@ -210,6 +217,7 @@ namespace SANATIFY.Services
                     Date = Convert.ToDateTime(row["Date"])
                 });
             }
+
             return requests;
         }
 
@@ -224,6 +232,7 @@ namespace SANATIFY.Services
             };
             _appDbContext.ExecuteNonQuery(query, parameters);
         }
+
         public List<FriendRequestViewModel> GetSentFriendRequests(int userId)
         {
             string query = @"
@@ -252,9 +261,33 @@ namespace SANATIFY.Services
                     ReceiverName = row["ReceiverName"].ToString()
                 });
             }
+
             return requests;
         }
 
+        public List<FriendViewModel> GetFriends(int userId)
+        {
+            string query = @"
+                    SELECT p.ID, p.FirstName + ' ' + p.LastName AS Name, p.Email
+                    FROM Freind f
+                    JOIN Person p ON (f.Person1_ID = p.ID OR f.Person2_ID = p.ID)
+                    WHERE (f.Person1_ID = @UserId OR f.Person2_ID = @UserId) AND p.ID != @UserId";
 
+            var parameters = new[] { new SqlParameter("@UserId", userId) };
+            DataTable result = _appDbContext.ExecuteQuery(query, parameters);
+
+            var friends = new List<FriendViewModel>();
+            foreach (DataRow row in result.Rows)
+            {
+                friends.Add(new FriendViewModel
+                {
+                    ID = Convert.ToInt32(row["ID"]),
+                    Name = row["Name"].ToString(),
+                    Email = row["Email"].ToString()
+                });
+            }
+
+            return friends;
+        }
     }
 }

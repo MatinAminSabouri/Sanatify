@@ -446,6 +446,12 @@ namespace SANATIFY.Controllers
             var requests = _userService.GetSentFriendRequests(userId);
             return View(requests);
         }
+        public IActionResult MyFriends()
+        {
+            int userId = _userService.GetUserId(usreName);
+            var friends = _userService.GetFriends(userId);
+            return View(friends);
+        }
 
     }
 }
