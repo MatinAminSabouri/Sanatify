@@ -1,0 +1,54 @@
+@model System.Collections.Generic.List<SANATIFY.Models.FriendRequestViewModel>
+
+@* @model IEnumerable<SANATIFY.Models.FriendRequestViewModel> *@
+
+@{
+    ViewData["Title"] = "My Requests";
+}
+
+<div class="centered-container">
+    <h2>My Friend Requests</h2>
+    <table class="table table-light table-bordered table-primary table-responsive table-striped">
+        <thead>
+        <tr>
+            <th>Sender ID</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var request in Model)
+        {
+            <tr>
+                <td>@request.Person_Sender_ID</td>
+                <td>@request.Date.ToString("yyyy-MM-dd")</td>
+                <td>
+                    <button class="btn btn-success" onclick="respondToRequest(@request.ID, true)">Accept</button>
+                    <button class="btn btn-danger" onclick="respondToRequest(@request.ID, false)">Reject</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function respondToRequest(requestId, accept) {
+        $.ajax({
+            type: "POST",
+            url: "/User/RespondToFriendRequest",
+            data: { requestId: requestId, accept: accept },
+            success: function (result) {
+                if (result.success) {
+                    alert("Response recorded.");
+                    location.reload();
+                } else {
+                    alert("Failed to respond to request.");
+                }
+            },
+            error: function () {
+                alert("An error occurred while responding to the request.");
+            }
+        });
+    }
+</script>

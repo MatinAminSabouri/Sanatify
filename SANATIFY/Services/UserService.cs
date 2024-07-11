@@ -103,20 +103,7 @@ namespace SANATIFY.Services
 
             _appDbContext.ExecuteNonQuery(query, parameters);
         }
-        public void SendFriendRequest(int senderId, int receiverId)
-        {
-            string query = "INSERT INTO Freind_Req (Person_Sender_ID, Person_Rec_ID, Accept, State, Date) " +
-                           "VALUES (@SenderId, @ReceiverId, 0, 1, @Date)";
-            var parameters = new SqlParameter[]
-            {
-                new SqlParameter("@SenderId", senderId),
-                new SqlParameter("@ReceiverId", receiverId),
-                new SqlParameter("@Date", DateTime.Now)
-            };
-
-            _appDbContext.ExecuteNonQuery(query, parameters);
-        }
-
+ 
         public void FollowUser(int followerId, int followingId)
         {
             string query = "INSERT INTO Following (Person_Follower_ID, Person_Following_ID) " +
@@ -191,6 +178,51 @@ namespace SANATIFY.Services
             }
 
             return songs;
+        }
+        public void SendFriendRequest(int senderId, int receiverId)
+        {
+            string query = "INSERT INTO Friend_Req (Person_Sender_ID, Person_Rec_ID, Accept, State, Date) VALUES (@SenderId, @ReceiverId, 0, 0, @Date)";
+            var parameters = new[]
+            {
+                new SqlParameter("@SenderId", senderId),
+                new SqlParameter("@ReceiverId", receiverId),
+                new SqlParameter("@Date", DateTime.Now)
+            };
+            _appDbContext.ExecuteNonQuery(query, parameters);
+        }
+
+        public List<FriendRequestViewModel> GetFriendRequests(int userId)
+        {
+            string query = "SELECT * FROM dbo.Friend_Req WHERE Person_Rec_ID = @UserId AND State = 0";
+            var parameters = new[] { new SqlParameter("@UserId", userId) };
+            DataTable result = _appDbContext.ExecuteQuery(query, parameters);
+
+            var requests = new List<FriendRequestViewModel>();
+            foreach (DataRow row in result.Rows)
+            {
+                requests.Add(new FriendRequestViewModel
+                {
+                    ID = Convert.ToInt32(row["ID"]),
+                    Person_Sender_ID = Convert.ToInt32(row["Person_Sender_ID"]),
+                    Person_Rec_ID = Convert.ToInt32(row["Person_Rec_ID"]),
+                    Accept = Convert.ToBoolean(row["Accept"]),
+                    State = Convert.ToBoolean(row["State"]),
+                    Date = Convert.ToDateTime(row["Date"])
+                });
+            }
+            return requests;
+        }
+
+
+        public void RespondToFriendRequest(int requestId, bool accept)
+        {
+            string query = "UPDATE Friend_Req SET Accept = @Accept, State = 1 WHERE ID = @RequestId";
+            var parameters = new[]
+            {
+                new SqlParameter("@Accept", accept),
+                new SqlParameter("@RequestId", requestId)
+            };
+            _appDbContext.ExecuteNonQuery(query, parameters);
         }
     }
 }

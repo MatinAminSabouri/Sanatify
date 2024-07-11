@@ -134,7 +134,7 @@ main {
     width: 215%;
 }
 .custom-dashboard{
-    background-color: rgb(185 212 178 / 92%);
+    background-color: rgba(225, 225, 225, 0.73);
 }
 .sidebar {
     background-color: #0f0e13;

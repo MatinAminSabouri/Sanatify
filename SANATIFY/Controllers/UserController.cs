@@ -137,7 +137,7 @@ namespace SANATIFY.Controllers
 
             return View(model);
         }
-        
+
         [HttpPost]
         public IActionResult AddToLikeSong(int musicId)
         {
@@ -146,7 +146,8 @@ namespace SANATIFY.Controllers
                 int personId = _userService.GetUserId(usreName);
 
                 // Check if the song is already liked by the user
-                string checkQuery = "SELECT COUNT(*) FROM Like_Music WHERE Music_ID = @Music_ID AND Person_ID = @Person_ID";
+                string checkQuery =
+                    "SELECT COUNT(*) FROM Like_Music WHERE Music_ID = @Music_ID AND Person_ID = @Person_ID";
                 var checkParameters = new[]
                 {
                     new SqlParameter("@Music_ID", musicId),
@@ -279,7 +280,7 @@ namespace SANATIFY.Controllers
             string query = "SELECT ID, Date, Price, Valid FROM Concert WHERE Valid = 1";
             DataTable result = _context.ExecuteQuery(query, new SqlParameter[0]);
 
-            
+
             List<ConcertViewModel> concerts = new List<ConcertViewModel>();
 
             decimal credit = _userService.GetUserCredit(usreName);
@@ -327,7 +328,6 @@ namespace SANATIFY.Controllers
 
                 if (userCredit >= concertPrice && isValid)
                 {
-
                     decimal newCredit = userCredit - concertPrice;
                     _userService.UpdateUserCredit(usreName, newCredit);
 
@@ -355,11 +355,13 @@ namespace SANATIFY.Controllers
 
             return RedirectToAction("AllConcerts");
         }
-        public IActionResult Browse()
+
+        public IActionResult Browse()     //Browse Users
         {
             var users = _userService.GetAllUsers();
             return View(users);
         }
+
         public IActionResult BrowseArtists()
         {
             var artists = _userService.GetAllArtists();
@@ -369,9 +371,38 @@ namespace SANATIFY.Controllers
         [HttpPost]
         public IActionResult SendFriendRequest(int receiverId)
         {
-            int senderId = _userService.GetUserId(usreName);
-            _userService.SendFriendRequest(senderId, receiverId);
-            return RedirectToAction("Browse");
+            try
+            {
+                int senderId = _userService.GetUserId(usreName);
+                _userService.SendFriendRequest(senderId, receiverId);
+                return Json(new { success = true });
+            }
+            catch (Exception)
+            {
+                return Json(new { success = false });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult MyRequests()
+        {
+            int userId = _userService.GetUserId(usreName);
+            var requests = _userService.GetFriendRequests(userId);
+            return View(requests);
+        }
+
+        [HttpPost]
+        public IActionResult RespondToFriendRequest(int requestId, bool accept)
+        {
+            try
+            {
+                _userService.RespondToFriendRequest(requestId, accept);
+                return Json(new { success = true });
+            }
+            catch (Exception)
+            {
+                return Json(new { success = false });
+            }
         }
 
         [HttpPost]
@@ -381,11 +412,11 @@ namespace SANATIFY.Controllers
             _userService.FollowUser(followerId, followingId);
             return RedirectToAction("Browse");
         }
+
         public IActionResult ViewArtistSongs(int artistId)
         {
             var songs = _userService.GetSongsByArtist(artistId);
             return View(songs);
         }
-
     }
 }
