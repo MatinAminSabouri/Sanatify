@@ -74,8 +74,8 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlci9NeUZyaWVuZHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/macbookair/test/Sanatify/SANATIFY/Views/User/MyRequests.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlci9NeVJlcXVlc3RzLmNzaHRtbA==
+[/Users/macbookair/test/Sanatify/SANATIFY/Views/User/MyReceivedRequests.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlci9NeVJlY2VpdmVkUmVxdWVzdHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/macbookair/test/Sanatify/SANATIFY/Views/User/MySentRequests.cshtml]

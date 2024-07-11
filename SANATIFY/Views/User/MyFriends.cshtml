@@ -1,33 +1,25 @@
-@model IEnumerable<SANATIFY.Models.FriendViewModel>
+@model List<SANATIFY.Models.UserViewModel>
 
 @{
     ViewData["Title"] = "My Friends";
 }
 
-<div class="container mt-4">
-    <h2>My Friends</h2>
-    <table class="table table-light table-bordered table-primary table-responsive table-striped">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var friend in Model)
+<div class="custom-dashboard centered-container">
+    <div class="content">
+        <h2 style="color: #1a1e21">My Friends</h2>
+
+        @if (Model.Count == 0)
         {
-            <tr>
-                <td>@friend.Name</td>
-                <td>@friend.Email</td>
-                <td>
-                    @* <a class="btn btn-info" href="@Url.Action("Likes", "User", new { id = friend.ID })">Likes</a> *@
-                    @* <a class="btn btn-warning" href="@Url.Action("Comments", "User", new { id = friend.ID })">Comments</a> *@
-                    @* <a class="btn btn-danger" href="@Url.Action("Unfriend", "User", new { id = friend.ID })">Unfriend</a> *@
-                    @* <a class="btn btn-success" href="@Url.Action("Chat", "Chat", new { id = friend.ID })">Chat</a> *@
-                </td>
-            </tr>
+            <p>You don't have any friends yet.</p>
         }
-        </tbody>
-    </table>
+        else
+        {
+            <ul>
+                @foreach (var friend in Model)
+                {
+                    <li>@friend.UserName - @friend.Email</li>
+                }
+            </ul>
+        }
+    </div>
 </div>

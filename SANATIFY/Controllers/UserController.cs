@@ -356,7 +356,7 @@ namespace SANATIFY.Controllers
             return RedirectToAction("AllConcerts");
         }
 
-        public IActionResult Browse()     //Browse Users
+        public IActionResult Browse() //Browse Users
         {
             var users = _userService.GetAllUsers();
             return View(users);
@@ -368,64 +368,6 @@ namespace SANATIFY.Controllers
             return View(artists);
         }
 
-        // [HttpPost]
-        // public IActionResult SendFriendRequest(int receiverId)
-        // {
-        //     try
-        //     {
-        //         int senderId = _userService.GetUserId(usreName);
-        //         _userService.SendFriendRequest(senderId, receiverId);
-        //         return Json(new { success = true });
-        //     }
-        //     catch (Exception)
-        //     {
-        //         return Json(new { success = false });
-        //     }
-        // }
-        [HttpPost]
-        public IActionResult SendFriendRequest(int receiverId)
-        {
-            try
-            {
-                int senderId = _userService.GetUserId(usreName);
-                string query = "INSERT INTO Friend_Req (Person_Sender_ID, Person_Rec_ID, Accept, State, Date) VALUES (@SenderID, @ReceiverID, 0, 0, @Date)";
-                var parameters = new[]
-                {
-                    new SqlParameter("@SenderID", senderId),
-                    new SqlParameter("@ReceiverID", receiverId),
-                    new SqlParameter("@Date", DateTime.Now)
-                };
-
-                _context.ExecuteNonQuery(query, parameters);
-                return Json(new { success = true });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = ex.Message });
-            }
-        }
-
-        [HttpGet]
-        public IActionResult MyRequests()
-        {
-            int userId = _userService.GetUserId(usreName);
-            var requests = _userService.GetFriendRequests(userId);
-            return View(requests);
-        }
-
-        [HttpPost]
-        public IActionResult RespondToFriendRequest(int requestId, bool accept)
-        {
-            try
-            {
-                _userService.RespondToFriendRequest(requestId, accept);
-                return Json(new { success = true });
-            }
-            catch (Exception)
-            {
-                return Json(new { success = false });
-            }
-        }
 
         [HttpPost]
         public IActionResult FollowUser(int followingId)
@@ -440,17 +382,85 @@ namespace SANATIFY.Controllers
             var songs = _userService.GetSongsByArtist(artistId);
             return View(songs);
         }
+
         public IActionResult MySentRequests()
         {
             int userId = _userService.GetUserId(usreName);
             var requests = _userService.GetSentFriendRequests(userId);
             return View(requests);
         }
+
+        // public IActionResult MyFriends()
+        // {
+        //     int userId = _userService.GetUserId(usreName);
+        //     var friends = _userService.GetFriends(userId);
+        //     return View(friends);
+        // }
+
+        [HttpPost]
+        public IActionResult SendFriendRequest(int receiverId)
+        {
+            try
+            {
+                int senderId = _userService.GetUserId(usreName);
+                // Send the friend request
+                _userService.SendFriendRequest(senderId, receiverId);
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        public IActionResult MyReceivedRequests()
+        {
+            try
+            {
+                int receiverId = _userService.GetUserId(usreName);
+                var requests = _userService.GetReceivedFriendRequests(receiverId);
+                return View(requests);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return RedirectToAction("UserDashboard");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult AcceptFriendRequest(int requestId)
+        {
+            try
+            {
+                _userService.AcceptFriendRequest(requestId);
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+
+        public IActionResult RejectFriendRequest()
+        {
+            throw new NotImplementedException();
+        }
         public IActionResult MyFriends()
         {
-            int userId = _userService.GetUserId(usreName);
-            var friends = _userService.GetFriends(userId);
-            return View(friends);
+            try
+            {
+                int userId = _userService.GetUserId(usreName); // Assuming you're using ASP.NET Core Identity for authentication
+                var friends = _userService.GetFriends(userId);
+                return View(friends);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(new List<UserViewModel>()); // Return an empty list if there's an error
+            }
         }
 
     }

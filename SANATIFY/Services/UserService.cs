@@ -188,32 +188,38 @@ namespace SANATIFY.Services
         public void SendFriendRequest(int senderId, int receiverId)
         {
             string query =
-                "INSERT INTO Friend_Req (Person_Sender_ID, Person_Rec_ID, Accept, State, Date) VALUES (@SenderId, @ReceiverId, 0, 0, @Date)";
+                "INSERT INTO FriendRequest (SenderID, ReceiverID, Status, Date) VALUES (@SenderId, @ReceiverId, 2, @Date)";
             var parameters = new[]
             {
                 new SqlParameter("@SenderId", senderId),
                 new SqlParameter("@ReceiverId", receiverId),
                 new SqlParameter("@Date", DateTime.Now)
             };
+
             _appDbContext.ExecuteNonQuery(query, parameters);
         }
 
-        public List<FriendRequestViewModel> GetFriendRequests(int userId)
+        public List<FriendRequestViewModel> GetSentFriendRequests(int senderId)
         {
-            string query = "SELECT * FROM dbo.Friend_Req WHERE Person_Rec_ID = @UserId AND State = 0";
-            var parameters = new[] { new SqlParameter("@UserId", userId) };
+            string query =
+                "SELECT ID, SenderID, ReceiverID, Status, Date FROM FriendRequest WHERE SenderID = @SenderId";
+            var parameters = new SqlParameter[]
+            {
+                new SqlParameter("@SenderId", senderId)
+            };
+
             DataTable result = _appDbContext.ExecuteQuery(query, parameters);
 
-            var requests = new List<FriendRequestViewModel>();
+            List<FriendRequestViewModel> requests = new List<FriendRequestViewModel>();
+
             foreach (DataRow row in result.Rows)
             {
                 requests.Add(new FriendRequestViewModel
                 {
                     ID = Convert.ToInt32(row["ID"]),
-                    Person_Sender_ID = Convert.ToInt32(row["Person_Sender_ID"]),
-                    Person_Rec_ID = Convert.ToInt32(row["Person_Rec_ID"]),
-                    Accept = Convert.ToBoolean(row["Accept"]),
-                    State = Convert.ToBoolean(row["State"]),
+                    SenderID = Convert.ToInt32(row["SenderID"]),
+                    ReceiverID = Convert.ToInt32(row["ReceiverID"]),
+                    Status = Convert.ToInt32(row["Status"]),
                     Date = Convert.ToDateTime(row["Date"])
                 });
             }
@@ -221,68 +227,102 @@ namespace SANATIFY.Services
             return requests;
         }
 
-
-        public void RespondToFriendRequest(int requestId, bool accept)
-        {
-            string query = "UPDATE Friend_Req SET Accept = @Accept, State = 1 WHERE ID = @RequestId";
-            var parameters = new[]
-            {
-                new SqlParameter("@Accept", accept),
-                new SqlParameter("@RequestId", requestId)
-            };
-            _appDbContext.ExecuteNonQuery(query, parameters);
-        }
-
-        public List<FriendRequestViewModel> GetSentFriendRequests(int userId)
+        public List<FriendRequestViewModel> GetReceivedFriendRequests(int receiverId)
         {
             string query = @"
-        SELECT fr.ID, fr.Person_Sender_ID, fr.Person_Rec_ID, fr.Accept, fr.State, fr.Date, 
-               sender.UserName  AS SenderName, 
-               receiver.UserName AS ReceiverName
-        FROM Friend_Req fr
-        JOIN Person sender ON fr.Person_Sender_ID = sender.ID
-        JOIN Person receiver ON fr.Person_Rec_ID = receiver.ID
-        WHERE fr.Person_Sender_ID = @UserId ";
-            var parameters = new[] { new SqlParameter("@UserId", userId) };
+        SELECT fr.ID, fr.SenderID, p.UserName AS SenderUserName, fr.Date
+        FROM FriendRequest fr
+        INNER JOIN Person p ON fr.SenderID = p.ID
+        WHERE fr.ReceiverID = @ReceiverId AND fr.Status = 2"; // Assuming Status 2 means Pending
+
+            var parameters = new[]
+            {
+                new SqlParameter("@ReceiverId", receiverId)
+            };
+
             DataTable result = _appDbContext.ExecuteQuery(query, parameters);
 
-            var requests = new List<FriendRequestViewModel>();
+            List<FriendRequestViewModel> requests = new List<FriendRequestViewModel>();
+
             foreach (DataRow row in result.Rows)
             {
                 requests.Add(new FriendRequestViewModel
                 {
-                    ID = Convert.ToInt32(row["ID"]),
-                    Person_Sender_ID = Convert.ToInt32(row["Person_Sender_ID"]),
-                    Person_Rec_ID = Convert.ToInt32(row["Person_Rec_ID"]),
-                    Accept = Convert.ToBoolean(row["Accept"]),
-                    State = Convert.ToBoolean(row["State"]),
-                    Date = Convert.ToDateTime(row["Date"]),
-                    SenderName = row["SenderName"].ToString(),
-                    ReceiverName = row["ReceiverName"].ToString()
+                    ID = (int)row["ID"],
+                    SenderID = (int)row["SenderID"],
+                    SenderName = row["SenderUserName"].ToString(),
+                    Date = Convert.ToDateTime(row["Date"])
                 });
             }
 
             return requests;
         }
 
-        public List<FriendViewModel> GetFriends(int userId)
+        public void AcceptFriendRequest(int requestId)
+        {
+            string updateQuery = "UPDATE FriendRequest SET Status = 1 WHERE ID = @RequestId";
+            var updateParameters = new[]
+            {
+                new SqlParameter("@RequestId", requestId)
+            };
+
+            _appDbContext.ExecuteNonQuery(updateQuery, updateParameters);
+
+            // Retrieve sender and receiver IDs from the request
+            string selectQuery = "SELECT SenderID, ReceiverID FROM FriendRequest WHERE ID = @RequestId";
+            var selectParameters = new[]
+            {
+                new SqlParameter("@RequestId", requestId)
+            };
+
+            DataTable result = _appDbContext.ExecuteQuery(selectQuery, selectParameters);
+
+            if (result.Rows.Count > 0)
+            {
+                int senderId = (int)result.Rows[0]["SenderID"];
+                int receiverId = (int)result.Rows[0]["ReceiverID"];
+
+                // Insert into Friend table (assuming bidirectional friendship)
+                string insertQuery =
+                    "INSERT INTO Friend (Person1ID, Person2ID) VALUES (@Person1ID, @Person2ID), (@Person2ID, @Person1ID)";
+                var insertParameters = new[]
+                {
+                    new SqlParameter("@Person1ID", senderId),
+                    new SqlParameter("@Person2ID", receiverId)
+                };
+
+                _appDbContext.ExecuteNonQuery(insertQuery, insertParameters);
+            }
+            else
+            {
+                throw new Exception("Friend request not found.");
+            }
+        }
+
+        public List<UserViewModel> GetFriends(int userId)
         {
             string query = @"
-                    SELECT p.ID, p.FirstName + ' ' + p.LastName AS Name, p.Email
-                    FROM Freind f
-                    JOIN Person p ON (f.Person1_ID = p.ID OR f.Person2_ID = p.ID)
-                    WHERE (f.Person1_ID = @UserId OR f.Person2_ID = @UserId) AND p.ID != @UserId";
+        SELECT p.ID, p.UserName, p.Email
+        FROM Person p
+        INNER JOIN Friend f ON (p.ID = f.Person1ID OR p.ID = f.Person2ID)
+        WHERE (f.Person1ID = @UserId OR f.Person2ID = @UserId)
+          AND p.ID != @UserId"; 
 
-            var parameters = new[] { new SqlParameter("@UserId", userId) };
+            var parameters = new[]
+            {
+                new SqlParameter("@UserId", userId)
+            };
+
             DataTable result = _appDbContext.ExecuteQuery(query, parameters);
 
-            var friends = new List<FriendViewModel>();
+            List<UserViewModel> friends = new List<UserViewModel>();
+
             foreach (DataRow row in result.Rows)
             {
-                friends.Add(new FriendViewModel
+                friends.Add(new UserViewModel
                 {
-                    ID = Convert.ToInt32(row["ID"]),
-                    Name = row["Name"].ToString(),
+                    ID = (int)row["ID"],
+                    UserName = row["UserName"].ToString(),
                     Email = row["Email"].ToString()
                 });
             }

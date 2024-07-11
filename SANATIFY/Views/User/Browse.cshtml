@@ -22,10 +22,12 @@
                 <td>@user.UserName</td>
                 <td>@user.Email</td>
                 <td>
-                    <form method="post" asp-action="SendFriendRequest">
-                        <input type="hidden" name="receiverId" value="@user.ID" />
-                        <button type="submit" class="btn btn-primary">Send Friend Request</button>
-                    </form>
+                    @* <form method="post" asp-action="SendFriendRequest"> *@
+                    @*     <input type="hidden" name="receiverId" value="@user.ID" /> *@
+                    @*     <button type="submit" class="btn btn-primary">Send Friend Request</button> *@
+                    @* </form> *@
+                    <button class="btn btn-primary" onclick="sendFriendRequest(@user.ID)">Send Friend Request</button>
+
                     <form method="post" asp-action="FollowUser">
                         <input type="hidden" name="followingId" value="@user.ID" />
                         <button type="submit" class="btn btn-secondary">Follow</button>
@@ -36,3 +38,26 @@
         </tbody>
     </table>
 </div>
+
+
+
+<script>
+    function sendFriendRequest(receiverId) {
+        $.ajax({
+            url: '@Url.Action("SendFriendRequest", "User")',
+            type: 'POST',
+            data: { receiverId: receiverId },
+            success: function (response) {
+                if (response.success) {
+                    alert('Friend request sent successfully.');
+                    // Optionally update UI or perform other actions on success
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function () {
+                alert('Error sending friend request.');
+            }
+        });
+    }
+</script>

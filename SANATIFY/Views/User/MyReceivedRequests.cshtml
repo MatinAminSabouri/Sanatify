@@ -1,0 +1,73 @@
+@model List<FriendRequestViewModel>
+
+@{
+    ViewData["Title"] = "My Received Requests";
+}
+
+<div class="custom-dashboard centered-container">
+    <div class="content">
+        <h2 style="color: #1a1e21">My Received Requests</h2>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Sender</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var request in Model)
+                {
+                    <tr>
+                        <td>@request.SenderName</td>
+                        <td>@request.Date.ToString("yyyy-MM-dd")</td>
+                        <td>
+                            <button class="btn btn-primary" onclick="acceptRequest(@request.ID)">Accept</button>
+                            <button class="btn btn-danger" onclick="rejectRequest(@request.ID)">Reject</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    function acceptRequest(requestId) {
+        $.ajax({
+            url: '@Url.Action("AcceptFriendRequest", "User")',
+            type: 'POST',
+            data: { requestId: requestId },
+            success: function (response) {
+                if (response.success) {
+                    alert('Request accepted successfully.');
+                    location.reload(); // Reload the page or update UI as needed
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function () {
+                alert('Error accepting friend request.');
+            }
+        });
+    }
+
+    function rejectRequest(requestId) {
+        $.ajax({
+            url: '@Url.Action("RejectFriendRequest", "User")',
+            type: 'POST',
+            data: { requestId: requestId },
+            success: function (response) {
+                if (response.success) {
+                    alert('Request rejected successfully.');
+                    location.reload(); // Reload the page or update UI as needed
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function () {
+                alert('Error rejecting friend request.');
+            }
+        });
+    }
+</script>
