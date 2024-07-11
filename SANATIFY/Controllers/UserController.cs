@@ -368,18 +368,40 @@ namespace SANATIFY.Controllers
             return View(artists);
         }
 
+        // [HttpPost]
+        // public IActionResult SendFriendRequest(int receiverId)
+        // {
+        //     try
+        //     {
+        //         int senderId = _userService.GetUserId(usreName);
+        //         _userService.SendFriendRequest(senderId, receiverId);
+        //         return Json(new { success = true });
+        //     }
+        //     catch (Exception)
+        //     {
+        //         return Json(new { success = false });
+        //     }
+        // }
         [HttpPost]
         public IActionResult SendFriendRequest(int receiverId)
         {
             try
             {
                 int senderId = _userService.GetUserId(usreName);
-                _userService.SendFriendRequest(senderId, receiverId);
+                string query = "INSERT INTO Friend_Req (Person_Sender_ID, Person_Rec_ID, Accept, State, Date) VALUES (@SenderID, @ReceiverID, 0, 0, @Date)";
+                var parameters = new[]
+                {
+                    new SqlParameter("@SenderID", senderId),
+                    new SqlParameter("@ReceiverID", receiverId),
+                    new SqlParameter("@Date", DateTime.Now)
+                };
+
+                _context.ExecuteNonQuery(query, parameters);
                 return Json(new { success = true });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return Json(new { success = false });
+                return Json(new { success = false, message = ex.Message });
             }
         }
 
@@ -418,5 +440,12 @@ namespace SANATIFY.Controllers
             var songs = _userService.GetSongsByArtist(artistId);
             return View(songs);
         }
+        public IActionResult MySentRequests()
+        {
+            int userId = _userService.GetUserId(usreName);
+            var requests = _userService.GetSentFriendRequests(userId);
+            return View(requests);
+        }
+
     }
 }

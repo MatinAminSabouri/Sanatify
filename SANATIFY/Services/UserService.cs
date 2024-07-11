@@ -224,5 +224,37 @@ namespace SANATIFY.Services
             };
             _appDbContext.ExecuteNonQuery(query, parameters);
         }
+        public List<FriendRequestViewModel> GetSentFriendRequests(int userId)
+        {
+            string query = @"
+        SELECT fr.ID, fr.Person_Sender_ID, fr.Person_Rec_ID, fr.Accept, fr.State, fr.Date, 
+               sender.UserName  AS SenderName, 
+               receiver.UserName AS ReceiverName
+        FROM Friend_Req fr
+        JOIN Person sender ON fr.Person_Sender_ID = sender.ID
+        JOIN Person receiver ON fr.Person_Rec_ID = receiver.ID
+        WHERE fr.Person_Sender_ID = @UserId ";
+            var parameters = new[] { new SqlParameter("@UserId", userId) };
+            DataTable result = _appDbContext.ExecuteQuery(query, parameters);
+
+            var requests = new List<FriendRequestViewModel>();
+            foreach (DataRow row in result.Rows)
+            {
+                requests.Add(new FriendRequestViewModel
+                {
+                    ID = Convert.ToInt32(row["ID"]),
+                    Person_Sender_ID = Convert.ToInt32(row["Person_Sender_ID"]),
+                    Person_Rec_ID = Convert.ToInt32(row["Person_Rec_ID"]),
+                    Accept = Convert.ToBoolean(row["Accept"]),
+                    State = Convert.ToBoolean(row["State"]),
+                    Date = Convert.ToDateTime(row["Date"]),
+                    SenderName = row["SenderName"].ToString(),
+                    ReceiverName = row["ReceiverName"].ToString()
+                });
+            }
+            return requests;
+        }
+
+
     }
 }

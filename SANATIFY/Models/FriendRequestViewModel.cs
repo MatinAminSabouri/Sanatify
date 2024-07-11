@@ -8,4 +8,6 @@ public class FriendRequestViewModel
     public bool Accept { get; set; }
     public bool State { get; set; }
     public DateTime Date { get; set; }
+    public string SenderName { get; set; }
+    public string ReceiverName { get; set; } 
 }
