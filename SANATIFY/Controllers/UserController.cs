@@ -443,29 +443,25 @@ namespace SANATIFY.Controllers
             }
         }
 
-
-        public IActionResult RejectFriendRequest()
-        {
-            throw new NotImplementedException();
-        }
         public IActionResult MyFriends()
         {
             try
             {
                 int userId = _userService.GetUserId(usreName);
                 var friends = _userService.GetFriends(userId);
-                
+
                 ViewBag.CurrentUserId = userId;
 
-                
+
                 return View(friends);
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
-                return View(new List<UserViewModel>()); // Return an empty list if there's an error
+                return View(new List<UserViewModel>());
             }
         }
+
         [HttpPost]
         public IActionResult Unfriend(int friendId)
         {
@@ -473,7 +469,7 @@ namespace SANATIFY.Controllers
             _userService.Unfriend(userId, friendId);
             return RedirectToAction("MyFriends");
         }
-        
+
         public IActionResult ChatMessages(int friendId)
         {
             int userId = _userService.GetUserId(usreName);
@@ -485,12 +481,11 @@ namespace SANATIFY.Controllers
             {
                 messageViewModels.Add(new MessageViewModel
                 {
-                    Date = msg.Date, 
+                    Date = msg.Date,
                     Text = msg.Text,
                     SenderName = usreName
                 });
                 Console.WriteLine(msg.Text);
-                
             }
 
             Console.WriteLine();
@@ -527,5 +522,18 @@ namespace SANATIFY.Controllers
             return View(messageViewModels);
         }
 
+        [HttpPost]
+        public IActionResult RejectFriendRequest(int requestId)
+        {
+            try
+            {
+                _userService.RejectFriendRequest(requestId);
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = true, message = ex.Message });
+            }
+        }
     }
 }

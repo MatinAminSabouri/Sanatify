@@ -298,6 +298,16 @@ namespace SANATIFY.Services
                 throw new Exception("Friend request not found.");
             }
         }
+        public void RejectFriendRequest(int requestId)
+        {
+            string updateQuery = "UPDATE FriendRequest SET Status = 0 WHERE ID = @RequestId";
+            var updateParameters = new[]
+            {
+                new SqlParameter("@RequestId", requestId)
+            };
+
+            _appDbContext.ExecuteNonQuery(updateQuery, updateParameters);
+        }
 
         public List<UserViewModel> GetFriends(int userId)
         {
