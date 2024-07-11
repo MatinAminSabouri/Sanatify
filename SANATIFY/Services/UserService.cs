@@ -306,7 +306,7 @@ namespace SANATIFY.Services
         FROM Person p
         INNER JOIN Friend f ON (p.ID = f.Person1ID OR p.ID = f.Person2ID)
         WHERE (f.Person1ID = @UserId OR f.Person2ID = @UserId)
-          AND p.ID != @UserId"; 
+          AND p.ID != @UserId";
 
             var parameters = new[]
             {
@@ -328,6 +328,68 @@ namespace SANATIFY.Services
             }
 
             return friends;
+        }
+
+        public void Unfriend(int userId, int friendId)
+        {
+            string query = "DELETE FROM Friend WHERE (Person1ID = @UserId AND Person2ID = @FriendId) " +
+                           "OR (Person1ID = @FriendId AND Person2ID = @UserId)";
+            var parameters = new[]
+            {
+                new SqlParameter("@UserId", userId),
+                new SqlParameter("@FriendId", friendId)
+            };
+
+            _appDbContext.ExecuteNonQuery(query, parameters);
+        }
+
+        public List<MessageViewModel> GetChatMessages(int userId, int friendId)
+        {
+            string query = @"
+        SELECT m.ID, m.Sender_ID, m.Rec_ID, m.Text, m.date, p.UserName as SenderName
+        FROM Message m
+        JOIN Person p ON m.Sender_ID = p.ID
+        WHERE (m.Sender_ID = @UserId AND m.Rec_ID = @FriendId) OR (m.Sender_ID = @FriendId AND m.Rec_ID = @UserId)
+        ORDER BY m.date";
+
+            var parameters = new[]
+            {
+                new SqlParameter("@UserId", userId),
+                new SqlParameter("@FriendId", friendId)
+            };
+
+            DataTable result = _appDbContext.ExecuteQuery(query, parameters);
+            List<MessageViewModel> messages = new List<MessageViewModel>();
+
+            foreach (DataRow row in result.Rows)
+            {
+                messages.Add(new MessageViewModel
+                {
+                    ID = (int)row["ID"],
+                    SenderID = (int)row["Sender_ID"],
+                    RecID = (int)row["Rec_ID"],
+                    SenderName = row["SenderName"].ToString(),
+                    Text = row["Text"].ToString(),
+                    Date = (DateTime)row["date"]
+                });
+            }
+
+            return messages;
+        }
+        
+        public void SendMessage(int userId, int friendId, string message)
+        {
+            string query =
+                "INSERT INTO Message (Sender_ID, Rec_ID, Text, date) VALUES (@SenderID, @RecID, @Text, @Date)";
+            var parameters = new[]
+            {
+                new SqlParameter("@SenderID", userId),
+                new SqlParameter("@RecID", friendId),
+                new SqlParameter("@Text", message),
+                new SqlParameter("@Date", DateTime.Now)
+            };
+
+            _appDbContext.ExecuteNonQuery(query, parameters);
         }
     }
 }

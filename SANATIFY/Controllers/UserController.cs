@@ -452,8 +452,12 @@ namespace SANATIFY.Controllers
         {
             try
             {
-                int userId = _userService.GetUserId(usreName); // Assuming you're using ASP.NET Core Identity for authentication
+                int userId = _userService.GetUserId(usreName);
                 var friends = _userService.GetFriends(userId);
+                
+                ViewBag.CurrentUserId = userId;
+
+                
                 return View(friends);
             }
             catch (Exception ex)
@@ -461,6 +465,66 @@ namespace SANATIFY.Controllers
                 ModelState.AddModelError(string.Empty, ex.Message);
                 return View(new List<UserViewModel>()); // Return an empty list if there's an error
             }
+        }
+        [HttpPost]
+        public IActionResult Unfriend(int friendId)
+        {
+            int userId = _userService.GetUserId(usreName);
+            _userService.Unfriend(userId, friendId);
+            return RedirectToAction("MyFriends");
+        }
+        
+        public IActionResult ChatMessages(int friendId)
+        {
+            int userId = _userService.GetUserId(usreName);
+            var messages = _userService.GetChatMessages(userId, friendId);
+
+            List<MessageViewModel> messageViewModels = new List<MessageViewModel>();
+
+            foreach (var msg in messages)
+            {
+                messageViewModels.Add(new MessageViewModel
+                {
+                    Date = msg.Date, 
+                    Text = msg.Text,
+                    SenderName = usreName
+                });
+                Console.WriteLine(msg.Text);
+                
+            }
+
+            Console.WriteLine();
+            return Json(messageViewModels);
+        }
+
+        [HttpPost]
+        public IActionResult SendMessage(int friendId, string message)
+        {
+            int userId = _userService.GetUserId(usreName);
+            _userService.SendMessage(userId, friendId, message);
+            return Ok();
+        }
+
+        public IActionResult ChatRoom(int friendId)
+        {
+            int userId = _userService.GetUserId(usreName);
+            var messages = _userService.GetChatMessages(userId, friendId);
+
+            List<MessageViewModel> messageViewModels = new List<MessageViewModel>();
+
+            foreach (var msg in messages)
+            {
+                messageViewModels.Add(new MessageViewModel
+                {
+                    Date = msg.Date,
+                    Text = msg.Text,
+                    SenderName = msg.SenderName
+                });
+            }
+
+            ViewBag.FriendId = friendId;
+            ViewBag.CurrentUserId = userId;
+            return View(messageViewModels);
         }
 
     }
