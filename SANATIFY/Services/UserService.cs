@@ -527,5 +527,68 @@ namespace SANATIFY.Services
                 throw new ApplicationException("Failed to cancel concert and refund tickets.", ex);
             }
         }
+        public int GetMostLikedGenreId(int userId)
+        {
+            try
+            {
+                var parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@UserId", userId)
+                };
+        
+                var result = _appDbContext.ExecuteQuery("GetMostLikedGenre @UserId", parameters);
+                if (result.Rows.Count > 0)
+                {
+                    return (int)result.Rows[0]["GENRE"]; 
+                }
+                else
+                {
+                    throw new ApplicationException("User's most liked genre not found.");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Failed to get user's most liked genre.", ex);
+            }
+        }
+
+ 
+        public List<MusicViewModel> GetRecommendedSongs(int genreId)
+        {
+            try
+            {
+                var parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@GenreId", genreId)
+                };
+
+                var result = _appDbContext.ExecuteQuery("GetRecommendedSongsByGenre @GenreId", parameters);
+
+                // Map the result to MusicViewModel list
+                List<MusicViewModel> recommendedSongs = new List<MusicViewModel>();
+                foreach (DataRow row in result.Rows)
+                {
+                    recommendedSongs.Add(new MusicViewModel
+                    {
+                        ID = Convert.ToInt32(row["ID"]),
+                        Name = row["Name"].ToString(),
+                        Person_ID = Convert.ToInt32(row["Person_ID"]),
+                        Genre_ID = Convert.ToInt32(row["Genre_ID"]),
+                        Region = row["Region"].ToString(),
+                        Ages = row["Ages"] != DBNull.Value ? Convert.ToInt32(row["Ages"]) : (int?)null,
+                        Date = Convert.ToDateTime(row["Date"]),
+                        Text = row["Text"].ToString(),
+                        Playlist_Allow = Convert.ToBoolean(row["Playlist_Allow"]),
+                        Cover = Convert.ToInt32(row["Cover"])
+                    });
+                }
+
+                return recommendedSongs;
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Failed to get recommended songs.", ex);
+            }
+        }
     }
 }

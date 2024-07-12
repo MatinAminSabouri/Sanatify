@@ -388,7 +388,7 @@ namespace SANATIFY.Controllers
             var requests = _userService.GetSentFriendRequests(userId);
             return View(requests);
         }
-        
+
         [HttpPost]
         public IActionResult SendFriendRequest(int receiverId)
         {
@@ -555,17 +555,19 @@ namespace SANATIFY.Controllers
                 return RedirectToAction("Error", "Home");
             }
         }
+
         [HttpGet]
         public IActionResult SearchMusics(string searchBy, string searchTerm)
         {
             List<MusicViewModel> musics = _userService.SearchMusics(searchBy, searchTerm);
             return View("SearchResults", musics);
         }
-        
+
         public IActionResult AddConcert()
         {
             return View();
         }
+
         [HttpPost]
         public IActionResult AddConcert(ConcertViewModel model)
         {
@@ -576,8 +578,7 @@ namespace SANATIFY.Controllers
 
             try
             {
-
-                int personId = _userService.GetUserId(usreName); 
+                int personId = _userService.GetUserId(usreName);
                 _userService.AddConcert(personId, model.Date, model.Price);
 
                 return RedirectToAction("ArtistDashboard");
@@ -588,6 +589,7 @@ namespace SANATIFY.Controllers
                 return View(model);
             }
         }
+
         [HttpPost]
         public IActionResult CancelConcert(int concertId)
         {
@@ -604,5 +606,20 @@ namespace SANATIFY.Controllers
             return RedirectToAction("AllArtistConcerts", "User");
         }
 
+        public IActionResult RecommendedSongs()
+        {
+            try
+            {
+                int userId = _userService.GetUserId(usreName);
+                int genreId = _userService.GetMostLikedGenreId(userId);
+                var recommendedSongs = _userService.GetRecommendedSongs(genreId);
+                return View(recommendedSongs);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                return View("Error");
+            }
+        }
     }
 }

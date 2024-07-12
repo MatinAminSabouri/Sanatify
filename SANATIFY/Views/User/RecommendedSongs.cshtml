@@ -1,0 +1,94 @@
+@model IEnumerable<SANATIFY.Models.MusicViewModel>
+
+@{
+    ViewData["Title"] = "Recommended Songs";
+}
+
+<div class="container mt-4">
+    <h2>Recommended Songs</h2>
+    <div class="row">
+        @if (Model != null)
+        {
+            @foreach (var music in Model)
+            {
+                <div class="col-md-3 mb-3">
+                    <div class="card">
+                        <div class="col-md-4 mb-4">
+                            @if (@music.Cover == 0)
+                            {
+                                <img src="~/css/covers/1.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 1)
+                            {
+                                <img src="~/css/covers/1.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 2)
+                            {
+                                <img src="~/css/covers/2.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 3)
+                            {
+                                <img src="~/css/covers/3.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 4)
+                            {
+                                <img src="~/css/covers/4.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 5)
+                            {
+                                <img src="~/css/covers/5.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 6)
+                            {
+                                <img src="~/css/covers/6.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 7)
+                            {
+                                <img src="~/css/covers/7.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 8)
+                            {
+                                <img src="~/css/covers/8.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 9)
+                            {
+                                <img src="~/css/covers/9.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 10)
+                            {
+                                <img src="~/css/covers/10.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">@music.Name</h5>
+                            <h5 class="card-title">@music.Name</h5>
+                            <p class="card-text">
+                                <div>
+                                    <strong>Artist ID:</strong> @music.Person_ID
+                                    <strong>Genre ID:</strong> @music.Genre_ID
+                                </div>
+                                <strong>Region:</strong> @music.Region<br/>
+                                <strong>Ages:</strong> @music.Ages?.ToString()
+                                <strong>Date:</strong> @music.Date.ToString("yyyy-MM-dd")
+                                @* <strong>Playlist Allowed:</strong> @music.Playlist_Allow<br/> *@
+                                <div>
+                                    <button class="btn btn-success" onclick="addToFavorites('@music.ID')">
+                                        💚
+                                    </button>
+                                    <button class="btn btn-success play-pause-btn" data-music-name="@music.Name" onclick="togglePlayPause(this, '@music.Name')">▶️</button>
+                                    <button class="btn btn-success" onclick="showLyrics('@music.Text')" data-toggle="tooltip" title="Show Lyrics">🖊</button>
+                                    <button class="btn btn-success" onclick="showCommentModal('@music.ID')" data-toggle="tooltip" title="Write Comment">📝</button>
+                                    <a class="btn btn-success" asp-controller="User" asp-action="ShowComments" asp-route-musicId="@music.ID" data-toggle="tooltip" title="Show Comments">🗒</a>
+                                </div>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No Recomended Music For you</p>
+        }
+    </div>
+</div>
