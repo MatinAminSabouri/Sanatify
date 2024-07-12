@@ -1,0 +1,39 @@
+@model IEnumerable<SANATIFY.Models.MusicViewModel>
+
+@{
+    ViewData["Title"] = "Add to Playlist";
+}
+
+<div class="centered-container">
+    <h2>Add Music to Playlist</h2>
+
+    <form method="post" asp-action="AddToPlaylist" asp-controller="User">
+        <table class="table table-light table-bordered table-primary table-responsive table-striped">
+            <thead>
+            <tr>
+                <th>Music ID</th>
+                <th>Name</th>
+                <th>Artist</th>
+                <th>Genre</th>
+                <th>Select</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var music in Model)
+            {
+                <tr>
+                    <td>@music.ID</td>
+                    <td>@music.Name</td>
+                    <td>@music.Person_ID</td>
+                    <td>@music.Genre_ID</td>
+                    <td>
+                        <input type="checkbox" name="musicIds" value="@music.ID" />
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+
+        <button type="submit" class="btn btn-primary">Add Selected to Playlist</button>
+    </form>
+</div>

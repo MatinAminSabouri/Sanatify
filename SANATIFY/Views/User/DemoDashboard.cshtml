@@ -1,0 +1,81 @@
+@model IEnumerable<SANATIFY.Models.MusicViewModel>
+
+@{
+    ViewData["Title"] = "All Musics";
+}
+
+<div class="container mt-4">
+    <h2>All Musics</h2>
+    <div class="row">
+        @foreach (var music in Model)
+        {
+            <input type="hidden" id="userId" value="@User.Identity.Name"/>
+            <div class="col-md-4 mb-3">
+                <div class="card" style="background-color: rgba(12,12,12,0.17)">
+                    <div class="custom-card">
+                        <div class="col-md-4 mb-4">
+                            @if (@music.Cover == 0)
+                            {
+                                <img src="~/css/covers/1.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 1)
+                            {
+                                <img src="~/css/covers/1.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 2)
+                            {
+                                <img src="~/css/covers/2.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 3)
+                            {
+                                <img src="~/css/covers/3.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 4)
+                            {
+                                <img src="~/css/covers/4.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 5)
+                            {
+                                <img src="~/css/covers/5.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 6)
+                            {
+                                <img src="~/css/covers/6.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 7)
+                            {
+                                <img src="~/css/covers/7.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 8)
+                            {
+                                <img src="~/css/covers/8.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 9)
+                            {
+                                <img src="~/css/covers/9.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                            @if (@music.Cover == 10)
+                            {
+                                <img src="~/css/covers/10.jpg" class="card-img-top  img-thumbnail" alt="@music.Cover"/>
+                            }
+                        </div>
+
+                        <h5 class="card-title">@music.Name</h5>
+                        <p class="card-text">
+                            <div>
+                                <strong>Artist ID:</strong> @music.Person_ID
+                                <strong>Genre ID:</strong> @music.Genre_ID
+                            </div>
+                            <strong>Region:</strong> @music.Region<br/>
+                            <strong>Ages:</strong> @music.Ages?.ToString()
+                            <strong>Date:</strong> @music.Date.ToString("yyyy-MM-dd")
+                           
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+

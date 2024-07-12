@@ -527,6 +527,52 @@ namespace SANATIFY.Services
                 throw new ApplicationException("Failed to cancel concert and refund tickets.", ex);
             }
         }
+        public List<MusicViewModel> GetLikedSongs(int userId)
+        {
+            try
+            {
+                // Query to fetch liked songs
+                string query = @"
+            SELECT m.ID, m.Name, m.Person_ID, m.Genre_ID, m.Region, m.Ages, m.Date, m.Text, m.Playlist_Allow, m.Cover
+            FROM Music m
+            INNER JOIN Like_Music lm ON m.ID = lm.Music_ID
+            WHERE lm.Person_ID = @UserId";
+
+                var parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@UserId", userId)
+                };
+
+                // Execute the query and fetch results
+                var result = _appDbContext.ExecuteQuery(query, parameters);
+
+                // Convert DataTable rows to MusicViewModel objects
+                var likedSongs = new List<MusicViewModel>();
+                foreach (DataRow row in result.Rows)
+                {
+                    likedSongs.Add(new MusicViewModel
+                    {
+                        ID = Convert.ToInt32(row["ID"]),
+                        Name = row["Name"].ToString(),
+                        Person_ID = Convert.ToInt32(row["Person_ID"]),
+                        Genre_ID = Convert.ToInt32(row["Genre_ID"]),
+                        Region = row["Region"].ToString(),
+                        Ages = Convert.ToInt32(row["Ages"]),
+                        Date = Convert.ToDateTime(row["Date"]),
+                        Text = row["Text"].ToString(),
+                        Playlist_Allow = Convert.ToBoolean(row["Playlist_Allow"]),
+                        Cover = Convert.ToInt32(row["Cover"])
+                    });
+                }
+
+                return likedSongs;
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Failed to retrieve liked songs.", ex);
+            }
+        }
+
         public int GetMostLikedGenreId(int userId)
         {
             try
@@ -535,11 +581,11 @@ namespace SANATIFY.Services
                 {
                     new SqlParameter("@UserId", userId)
                 };
-        
+
                 var result = _appDbContext.ExecuteQuery("GetMostLikedGenre @UserId", parameters);
                 if (result.Rows.Count > 0)
                 {
-                    return (int)result.Rows[0]["GENRE"]; 
+                    return (int)result.Rows[0]["GENRE"];
                 }
                 else
                 {
@@ -552,7 +598,7 @@ namespace SANATIFY.Services
             }
         }
 
- 
+
         public List<MusicViewModel> GetRecommendedSongs(int genreId)
         {
             try
@@ -590,5 +636,159 @@ namespace SANATIFY.Services
                 throw new ApplicationException("Failed to get recommended songs.", ex);
             }
         }
+        
+        public void AddMusicToPlaylist(int playlistId, int musicId)
+        {
+            try
+            {
+                var query = "INSERT INTO Music_Playlist (Music_ID, Playlist_ID) VALUES (@MusicId, @PlaylistId)";
+                var parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@MusicId", musicId),
+                    new SqlParameter("@PlaylistId", (int)1)
+                };
+
+                _appDbContext.ExecuteNonQuery(query, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Failed to add music to playlist.", ex);
+            }
+        }
+
+        public List<MusicViewModel> GetAllMusic()
+        {
+            var query = " SELECT * FROM Music WHERE Playlist_Allow = @Allow ";
+            var parameters = new SqlParameter[]
+            {
+                new SqlParameter("@Allow", 1)
+            };
+            var result = _appDbContext.ExecuteQuery(query, parameters);
+
+            var musicList = new List<MusicViewModel>();
+
+            foreach (DataRow row in result.Rows)
+            {
+                musicList.Add(new MusicViewModel
+                {
+                    ID = (int)row["ID"],
+                    Name = row["Name"].ToString(),
+                    Person_ID = (int)row["Person_ID"],
+                    Genre_ID = (int)row["Genre_ID"],
+                    Region = row["Region"].ToString(),
+                    Ages = (int)row["Ages"],
+                    Date = (DateTime)row["Date"],
+                    Text = row["Text"].ToString(),
+                    Playlist_Allow = (bool)row["Playlist_Allow"],
+                    Cover = (int)row["Cover"]
+                });
+            }
+
+            return musicList;
+        }
+        public IEnumerable<MusicViewModel> GetMusicInPlaylist(int playlistId)
+        {
+            try
+            {
+                var query = @"
+                    SELECT m.ID, m.Name, m.Person_ID, m.Genre_ID, m.Region, m.Ages, m.Date, m.Text, m.Playlist_Allow, m.Cover
+                    FROM Music m
+                    JOIN Music_Playlist mp ON m.ID = mp.Music_ID
+                    WHERE mp.Playlist_ID = @PlaylistId
+                ";
+
+                var parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@PlaylistId", playlistId)
+                };
+
+                var result = _appDbContext.ExecuteQuery(query, parameters);
+
+                var musicList = new List<MusicViewModel>();
+
+                foreach (DataRow row in result.Rows)
+                {
+                    musicList.Add(new MusicViewModel
+                    {
+                        ID = Convert.ToInt32(row["ID"]),
+                        Name = row["Name"].ToString(),
+                        Person_ID = Convert.ToInt32(row["Person_ID"]),
+                        Genre_ID = Convert.ToInt32(row["Genre_ID"]),
+                        Region = row["Region"].ToString(),
+                        Ages = Convert.ToInt32(row["Ages"]),
+                        Date = Convert.ToDateTime(row["Date"]),
+                        Text = row["Text"].ToString(),
+                        Playlist_Allow = Convert.ToBoolean(row["Playlist_Allow"]),
+                        Cover = Convert.ToInt32(row["Cover"])
+                    });
+                }
+
+                return musicList;
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Failed to retrieve music in playlist.", ex);
+            }
+        }public List<MusicViewModel> GetMusicForPlaylist()
+        {
+            try
+            {
+                // Query to fetch music that can be added to playlist
+                string query = "SELECT ID, Name, Person_ID, Genre_ID, Region, Ages, Date, Text, Playlist_Allow, Cover FROM Music WHERE Playlist_Allow = @Allow ";
+                var parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@Allow", (int)1)
+                };
+                var result = _appDbContext.ExecuteQuery(query, parameters);
+
+                // Convert DataTable rows to MusicViewModel objects
+                var musicList = new List<MusicViewModel>();
+                foreach (DataRow row in result.Rows)
+                {
+                    musicList.Add(new MusicViewModel
+                    {
+                        ID = Convert.ToInt32(row["ID"]),
+                        Name = row["Name"].ToString(),
+                        Person_ID = Convert.ToInt32(row["Person_ID"]),
+                        Genre_ID = Convert.ToInt32(row["Genre_ID"]),
+                        Region = row["Region"].ToString(),
+                        Ages = Convert.ToInt32(row["Ages"]),
+                        Date = Convert.ToDateTime(row["Date"]),
+                        Text = row["Text"].ToString(),
+                        Playlist_Allow = Convert.ToBoolean(row["Playlist_Allow"]),
+                        Cover = Convert.ToInt32(row["Cover"])
+                    });
+                }
+
+                return musicList;
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Failed to retrieve music for playlist.", ex);
+            }
+        }
+        public void AddMusicToPlaylist(int userId, List<int> musicIds)
+        {
+            try
+            {
+                foreach (int musicId in musicIds)
+                {
+                    // Insert into Music_Playlist table
+                    string query = "INSERT INTO Music_Playlist (Music_ID, Playlist_ID) VALUES (@MusicId, @PlaylistId)";
+                    var parameters = new SqlParameter[]
+                    {
+                        new SqlParameter("@MusicId", musicId),
+                        new SqlParameter("@PlaylistId", userId) // Example: Using user ID as Playlist ID
+                    };
+
+                    _appDbContext.ExecuteNonQuery(query, parameters);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Failed to add music to playlist.", ex);
+            }
+        }
+
     }
 }

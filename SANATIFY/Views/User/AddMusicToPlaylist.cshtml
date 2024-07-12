@@ -1,0 +1,41 @@
+@model IEnumerable<SANATIFY.Models.MusicViewModel>
+
+@{
+    ViewData["Title"] = "View Playlist";
+}
+
+<div class="centered-container">
+    <h2>View Playlist</h2>
+
+    @if (!Model.Any())
+    {
+        <p>No music found in the playlist.</p>
+    }
+    else
+    {
+        <table class="table table-light table-bordered table-primary table-responsive table-striped">
+            <thead>
+                <tr>
+                    <th>Music ID</th>
+                    <th>Name</th>
+                    <th>Artist</th>
+                    <th>Genre</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var music in Model)
+                {
+                    <tr>
+                        <td>@music.ID</td>
+                        <td>@music.Name</td>
+                        <td>@music.Person_ID</td>
+                        <td>@music.Genre_ID</td>
+                        <td>@music.Date.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

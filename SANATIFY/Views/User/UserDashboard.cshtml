@@ -1,3 +1,33 @@
+@* @{ *@
+@*     ViewData["Title"] = "User Dashboard"; *@
+@* } *@
+@* *@
+@* <div class="custom-dashboard centered-container"> *@
+@*     <div class="content"> *@
+@*         <h2 style="color: #1a1e21">Dashboard</h2> *@
+@* *@
+@*         <div class="btn btn-primary"> *@
+@*             <a href="@Url.Action("DisplayAllMusics", "Music")" class="btn btn-pink blurred-btn">All Musics</a> *@
+@*         </div> *@
+@*         <div class="btn btn-primary"> *@
+@*             <a href="@Url.Action("AllConcerts", "User")" class="btn btn-pink blurred-btn">All Concerts</a> *@
+@*         </div> *@
+@*         <div class="btn btn-primary"> *@
+@*             <a href="@Url.Action("BrowseArtists", "User")" class="btn btn-pink blurred-btn">Browse Artists</a> *@
+@*         </div> *@
+@*         <div> *@
+@*             <button class="btn btn-primary" onclick="window.location.href='@Url.Action("MyReceivedRequests", "User")'">My Requests</button> *@
+@*             <button class="btn btn-primary" onclick="window.location.href='@Url.Action("Browse", "User")'">Browse Users</button> *@
+@*             <a class="btn btn-primary" href="@Url.Action("MySentRequests", "User")">My Sent Requests</a> *@
+@*             <a class="btn btn-primary" href="@Url.Action("MyFriends", "User")">My Friends</a> *@
+@*             <a class="btn btn-primary" href="@Url.Action("RecommendedSongs", "User")">Recommended Songs</a> *@
+@*             <a href="@Url.Action("AddToPlaylist", "User")" class="btn btn-pink blurred-btn">Add Playlist </a> *@
+@*         </div> *@
+@*     </div> *@
+@* </div> *@
+
+
+
 @{
     ViewData["Title"] = "User Dashboard";
 }
@@ -6,22 +36,72 @@
     <div class="content">
         <h2 style="color: #1a1e21">Dashboard</h2>
 
-        <div class="btn btn-primary">
-            <a href="@Url.Action("DisplayAllMusics", "Music")" class="btn btn-pink blurred-btn">All Musics</a>
+        <div class="dashboard-section">
+            <h3>Manage Music and Concerts</h3>
+            <div class="btn-container">
+                <a href="@Url.Action("DisplayAllMusics", "Music")" class="btn btn-primary">All Musics</a>
+            </div>
+            <div class="btn-container">
+                <a href="@Url.Action("AllConcerts", "User")" class="btn btn-primary">All Concerts</a>
+            </div>
+            <div class="btn-container">
+                <a href="@Url.Action("BrowseArtists", "User")" class="btn btn-primary">Browse Artists</a>
+            </div>
         </div>
-        <div class="btn btn-primary">
-            <a href="@Url.Action("AllConcerts", "User")" class="btn btn-pink blurred-btn">All Concerts</a>
-        </div>
-        <div class="btn btn-primary">
-            <a href="@Url.Action("BrowseArtists", "User")" class="btn btn-pink blurred-btn">Browse Artists</a>
-        </div>
-        <div>
-            <button class="btn btn-primary" onclick="window.location.href='@Url.Action("MyReceivedRequests", "User")'">My Requests</button>
-            <button class="btn btn-primary" onclick="window.location.href='@Url.Action("Browse", "User")'">Browse Users</button>
-            <a class="btn btn-primary" href="@Url.Action("MySentRequests", "User")">My Sent Requests</a>
-            <a class="btn btn-primary" href="@Url.Action("MyFriends", "User")">My Friends</a>
-            <a class="btn btn-primary" href="@Url.Action("RecommendedSongs", "User")">Recommended Songs</a>
 
+        <div class="dashboard-section">
+            <h3>Manage Friendships</h3>
+            <div class="btn-container">
+                <button class="btn btn-primary" onclick="window.location.href='@Url.Action("MyReceivedRequests", "User")'">My Requests</button>
+            </div>
+            <div class="btn-container">
+                <button class="btn btn-primary" onclick="window.location.href='@Url.Action("Browse", "User")'">Browse Users</button>
+            </div>
+            <div class="btn-container">
+                <a href="@Url.Action("MySentRequests", "User")" class="btn btn-primary">My Sent Requests</a>
+            </div>
+            <div class="btn-container">
+                <a href="@Url.Action("MyFriends", "User")" class="btn btn-primary">My Friends</a>
+            </div>
         </div>
+
+        <div class="dashboard-section">
+            <h3>Explore Music</h3>
+            <div class="btn-container">
+                <a href="@Url.Action("RecommendedSongs", "User")" class="btn btn-primary">Recommended Songs</a>
+            </div>
+            <div class="btn-container">
+                <a href="@Url.Action("AddToPlaylist", "User")" class="btn btn-primary">Add to Playlist</a>
+            </div>
+        </div>
+
     </div>
 </div>
+
+<style>
+    .custom-dashboard {
+        background-color: #f0f0f0;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .content {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .dashboard-section {
+        margin-bottom: 30px;
+    }
+
+    .dashboard-section h3 {
+        color: #1a1e21;
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .btn-container {
+        margin-bottom: 10px;
+    }
+</style>

@@ -46,6 +46,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlci9BZGRNdXNpYy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/macbookair/test/Sanatify/SANATIFY/Views/User/AddMusicToPlaylist.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlci9BZGRNdXNpY1RvUGxheWxpc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/macbookair/test/Sanatify/SANATIFY/Views/User/AddToPlaylist.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlci9BZGRUb1BsYXlsaXN0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/macbookair/test/Sanatify/SANATIFY/Views/User/AllArtistConcerts.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlci9BbGxBcnRpc3RDb25jZXJ0cy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -74,12 +82,24 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlci9DaGF0Um9vbS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/macbookair/test/Sanatify/SANATIFY/Views/User/DemoDashboard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlci9EZW1vRGFzaGJvYXJkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/macbookair/test/Sanatify/SANATIFY/Views/User/DemoLogin.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlci9EZW1vTG9naW4uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/macbookair/test/Sanatify/SANATIFY/Views/User/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlci9Mb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/macbookair/test/Sanatify/SANATIFY/Views/User/MyFriends.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlci9NeUZyaWVuZHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/macbookair/test/Sanatify/SANATIFY/Views/User/MyLikedSongs.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlci9NeUxpa2VkU29uZ3MuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/macbookair/test/Sanatify/SANATIFY/Views/User/MyReceivedRequests.cshtml]
@@ -112,6 +132,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/Users/macbookair/test/Sanatify/SANATIFY/Views/User/ViewArtistSongs.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlci9WaWV3QXJ0aXN0U29uZ3MuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/macbookair/test/Sanatify/SANATIFY/Views/User/ViewPlaylist.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlci9WaWV3UGxheWxpc3QuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/macbookair/test/Sanatify/SANATIFY/Views/_ViewImports.cshtml]

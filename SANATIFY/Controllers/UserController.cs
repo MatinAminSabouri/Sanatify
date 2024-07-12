@@ -51,7 +51,7 @@ namespace SANATIFY.Controllers
 
                 _context.ExecuteNonQuery(query, parameters);
 
-                return RedirectToAction("DisplayAllMusics", "Music");
+                return RedirectToAction("Login", "User");
             }
 
             return View(model);
@@ -93,6 +93,11 @@ namespace SANATIFY.Controllers
                     {
                         return RedirectToAction("ArtistDashboard", "User");
                     }
+
+                    if (kindUser == 3)
+                    {
+                        return RedirectToAction("DemoDashboard", "User");
+                    }
                     else
                     {
                         return RedirectToAction("UserDashboard", "User");
@@ -125,8 +130,43 @@ namespace SANATIFY.Controllers
 
                 if (result.Rows.Count > 0 && (int)result.Rows[0][0] > 0)
                 {
-                    userId = 4;
+                    userId = _userService.GetUserId(usreName);
                     return RedirectToAction("ArtistDashboard", "User");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                }
+            }
+
+            return View(model);
+        }
+
+        public IActionResult DemoLogin()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult DemoLogin(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                string query =
+                    "SELECT COUNT(*) FROM Person WHERE UserName = @Username AND Password = @Password AND Kind_ID = 3";
+
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@Username", model.Username),
+                    new SqlParameter("@Password", model.Password)
+                };
+
+                DataTable result = _context.ExecuteQuery(query, parameters);
+
+                if (result.Rows.Count > 0 && (int)result.Rows[0][0] > 0)
+                {
+                    userId = _userService.GetUserId(model.Username);
+                    return RedirectToAction("DemoDashboard", "User");
                 }
                 else
                 {
@@ -177,10 +217,6 @@ namespace SANATIFY.Controllers
             }
         }
 
-        public IActionResult Library()
-        {
-            throw new NotImplementedException();
-        }
 
         public IActionResult ArtistDashboard()
         {
@@ -258,20 +294,6 @@ namespace SANATIFY.Controllers
             return concerts;
         }
 
-        // [HttpPost]
-        // public IActionResult CancelConcert(int concertId)
-        // {
-        //     string query = "UPDATE Concert SET Valid = 0 WHERE ID = @ConcertId AND Person_ID = @Person_ID";
-        //     var parameters = new[]
-        //     {
-        //         new SqlParameter("@ConcertId", concertId),
-        //         new SqlParameter("@Person_ID", userId)
-        //     };
-        //
-        //     _context.ExecuteNonQuery(query, parameters);
-        //
-        //     return RedirectToAction("AllArtistConcerts");
-        // }
 
         [HttpGet]
         public IActionResult AllConcerts()
@@ -620,6 +642,118 @@ namespace SANATIFY.Controllers
                 ViewBag.ErrorMessage = ex.Message;
                 return View("Error");
             }
+        }
+
+        [HttpPost]
+        public IActionResult AddMusicToPlaylist(int playlistId, int musicId)
+        {
+            try
+            {
+                _userService.AddMusicToPlaylist(playlistId, musicId);
+
+                return RedirectToAction("ViewPlaylist", new { playlistId = playlistId });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+                return RedirectToAction("Error", "Home");
+            }
+        }
+
+        public IActionResult ViewPlaylist(int playlistId)
+        {
+            var musicInPlaylist = _userService.GetMusicInPlaylist(playlistId);
+
+            return View(musicInPlaylist);
+        }
+
+        public IActionResult AddToPlaylist()
+        {
+            try
+            {
+                // Get all music that can be added to playlist (Playlist_Allow = 1)
+                var musicForPlaylist = _userService.GetMusicForPlaylist();
+
+                return View(musicForPlaylist);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message); // Handle or log the exception as needed
+                return RedirectToAction("Index", "Home"); // Redirect to a default page or handle error gracefully
+            }
+        }
+
+        [HttpPost]
+        public IActionResult AddToPlaylist(List<int> musicIds)
+        {
+            try
+            {
+                Console.WriteLine(musicIds[0]);
+                int userId = _userService.GetUserId(usreName);
+
+                _userService.AddMusicToPlaylist(userId, musicIds[0]);
+
+                return RedirectToAction("ViewPlaylist");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        public IActionResult ViewPlaylist()
+        {
+            // Retrieve playlist data from the service
+            var playlist = _userService.GetMusicInPlaylist(1);
+
+            return View(playlist);
+        }
+
+
+        public IActionResult MyLikedSongs()
+        {
+            try
+            {
+                int userId = _userService.GetUserId(usreName);
+
+                List<MusicViewModel> likedSongs = _userService.GetLikedSongs(userId);
+
+                return View(likedSongs);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message); // Log the exception for debugging purposes
+                return RedirectToAction("Index", "Home"); // Redirect to a default page or handle the error
+            }
+        }
+        
+        [HttpGet]
+        public IActionResult DemoDashboard()
+        {
+            string query = "SELECT ID, Name, Person_ID, Genre_ID, Region, Ages, Date, Text, Playlist_Allow, Cover FROM Music";
+            DataTable result = _context.ExecuteQuery(query, new SqlParameter[] { });
+
+            var musicList = new List<MusicViewModel>();
+            foreach (DataRow row in result.Rows)
+            {
+                musicList.Add(new MusicViewModel
+                {
+                    ID = (int)row["ID"],
+                    Name = row["Name"].ToString(),
+                    Person_ID = (int)row["Person_ID"],
+                    Genre_ID = (int)row["Genre_ID"],
+                    Region = row["Region"].ToString(),
+                    Ages = row["Ages"] != DBNull.Value ? (int?)row["Ages"] : null,
+                    Date = (DateTime)row["Date"],
+                    Text = row["Text"].ToString(),
+                    Playlist_Allow = (bool)row["Playlist_Allow"],
+                    Cover = (int)row["Cover"]
+                });
+            }
+
+            return View(musicList);
         }
     }
 }
