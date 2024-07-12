@@ -142,7 +142,19 @@ main {
 }
 .Add-to-fav-custom{
     padding-bottom: 6px;
+    width: fit-content;
 }
 #lyricsText{
     color: #146c43;
+}
+#allCommentsBody{
+    color: #146c43;
+}
+.color-comment{
+    color: #146c43;
+}
+.btn-success {
+    color: #fff;
+    background-color: #8a9f9554;
+    /* border-color: #198754; */
 }
