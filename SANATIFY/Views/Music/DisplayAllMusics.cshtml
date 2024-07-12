@@ -71,13 +71,15 @@
                             <strong>Date:</strong> @music.Date.ToString("yyyy-MM-dd")
                             @* <strong>Lyrics:</strong> @music.Text<br/> *@
                             @* <strong>Playlist Allowed:</strong> @music.Playlist_Allow<br/> *@
-                            <div class="card-footer d-flex justify-content-between" onclick="addToFavorites('@music.ID')">
+                            <div class="Add-to-fav-custom" onclick="addToFavorites('@music.ID')">
                                 <button class="btn btn-success">
                                     Add to Fav
                                 </button>
                             </div>
+                            <div>
+                                <button class="btn btn-primary play-pause-btn" data-music-name="@music.Name" onclick="togglePlayPause(this, '@music.Name')">Play</button>
+                            </div>
                         </p>
-
                     </div>
                 </div>
             </div>
@@ -105,6 +107,21 @@ function addToFavorites(musicId) {
             alert("An error occurred while adding the song to favorites.");
         }
     });
+}
+
+
+function togglePlayPause(button, songName) {
+    if (button.innerText === "Play") {
+        alert("Start playing " + songName);
+        button.innerText = "Pause";
+        button.classList.remove('btn-primary');
+        button.classList.add('btn-danger');
+    } else {
+        alert("Paused");
+        button.innerText = "Play";
+        button.classList.remove('btn-danger');
+        button.classList.add('btn-primary');
+    }
 }
 
 </script>
