@@ -494,5 +494,19 @@ namespace SANATIFY.Services
 
             return musics;
         }
+        public void AddConcert(int personId, DateTime date, int price)
+        {
+            string query = @"INSERT INTO Concert (Person_ID, Date, Price)
+                             VALUES (@Person_ID, @Date, @Price)";
+            
+            var parameters = new SqlParameter[]
+            {
+                new SqlParameter("@Person_ID", personId),
+                new SqlParameter("@Date", date),
+                new SqlParameter("@Price", price)
+            };
+
+            _appDbContext.ExecuteNonQuery(query, parameters);
+        }
     }
 }

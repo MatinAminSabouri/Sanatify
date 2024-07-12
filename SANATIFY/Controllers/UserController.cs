@@ -562,6 +562,32 @@ namespace SANATIFY.Controllers
             List<MusicViewModel> musics = _userService.SearchMusics(searchBy, searchTerm);
             return View("SearchResults", musics);
         }
+        
+        public IActionResult AddConcert()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult AddConcert(ConcertViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
 
+            try
+            {
+
+                int personId = _userService.GetUserId(usreName); 
+                _userService.AddConcert(personId, model.Date, model.Price);
+
+                return RedirectToAction("ArtistDashboard");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "An error occurred while adding the concert. Please try again.");
+                return View(model);
+            }
+        }
     }
 }
