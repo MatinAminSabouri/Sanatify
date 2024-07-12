@@ -556,5 +556,12 @@ namespace SANATIFY.Controllers
                 return RedirectToAction("Error", "Home");
             }
         }
+        [HttpGet]
+        public IActionResult SearchMusics(string searchBy, string searchTerm)
+        {
+            List<MusicViewModel> musics = _userService.SearchMusics(searchBy, searchTerm);
+            return View("SearchResults", musics);
+        }
+
     }
 }

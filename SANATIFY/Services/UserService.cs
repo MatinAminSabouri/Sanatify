@@ -298,6 +298,7 @@ namespace SANATIFY.Services
                 throw new Exception("Friend request not found.");
             }
         }
+
         public void RejectFriendRequest(int requestId)
         {
             string updateQuery = "UPDATE FriendRequest SET Status = 0 WHERE ID = @RequestId";
@@ -386,7 +387,7 @@ namespace SANATIFY.Services
 
             return messages;
         }
-        
+
         public void SendMessage(int userId, int friendId, string message)
         {
             string query =
@@ -401,9 +402,11 @@ namespace SANATIFY.Services
 
             _appDbContext.ExecuteNonQuery(query, parameters);
         }
+
         public void AddComment(int personId, int musicId, string text)
         {
-            string query = "INSERT INTO Comment_Music (Person_ID, Music_ID, Text) VALUES (@Person_ID, @Music_ID, @Text)";
+            string query =
+                "INSERT INTO Comment_Music (Person_ID, Music_ID, Text) VALUES (@Person_ID, @Music_ID, @Text)";
             var parameters = new SqlParameter[]
             {
                 new SqlParameter("@Person_ID", personId),
@@ -442,6 +445,54 @@ namespace SANATIFY.Services
 
             return comments;
         }
-        
+
+        public List<MusicViewModel> SearchMusics(string searchBy, string searchTerm)
+        {
+            string query = "";
+
+            switch (searchBy.ToLower())
+            {
+                case "name":
+                    query = "SELECT * FROM Music WHERE LOWER(Name) LIKE @SearchTerm";
+                    break;
+                case "artistname":
+                    query = "SELECT * FROM Music WHERE LOWER(Person_ID) LIKE @SearchTerm";
+                    break;
+                case "genre":
+                    query = "SELECT * FROM Music WHERE LOWER(Genre_ID) LIKE @SearchTerm";
+                    break;
+                case "age":
+                    query = "SELECT * FROM Music WHERE LOWER(Ages) LIKE @SearchTerm";
+                    break;
+                default:
+                    query = "SELECT * FROM Music WHERE LOWER(Name) LIKE @SearchTerm";
+                    break;
+            }
+
+            var parameters = new SqlParameter[]
+            {
+                new SqlParameter("@SearchTerm", "%" + searchTerm.ToLower() + "%")
+            };
+
+            DataTable result = _appDbContext.ExecuteQuery(query, parameters);
+            List<MusicViewModel> musics = new List<MusicViewModel>();
+
+            foreach (DataRow row in result.Rows)
+            {
+                musics.Add(new MusicViewModel
+                {
+                    ID = (int)row["ID"],
+                    Name = row["Name"].ToString(),
+                    Person_ID = (int)row["Person_ID"],
+                    Genre_ID = (int)row["Genre_ID"],
+                    Region = row["Region"].ToString(),
+                    Ages = (int)row["Ages"],
+                    Date = (DateTime)row["Date"],
+                    Cover = (int)row["Cover"]
+                });
+            }
+
+            return musics;
+        }
     }
 }
