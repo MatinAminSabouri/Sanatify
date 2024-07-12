@@ -388,14 +388,7 @@ namespace SANATIFY.Controllers
             var requests = _userService.GetSentFriendRequests(userId);
             return View(requests);
         }
-
-        // public IActionResult MyFriends()
-        // {
-        //     int userId = _userService.GetUserId(usreName);
-        //     var friends = _userService.GetFriends(userId);
-        //     return View(friends);
-        // }
-
+        
         [HttpPost]
         public IActionResult SendFriendRequest(int receiverId)
         {
@@ -484,10 +477,8 @@ namespace SANATIFY.Controllers
                     Text = msg.Text,
                     SenderName = usreName
                 });
-                Console.WriteLine(msg.Text);
             }
 
-            Console.WriteLine();
             return Json(messageViewModels);
         }
 
@@ -532,6 +523,37 @@ namespace SANATIFY.Controllers
             catch (Exception ex)
             {
                 return Json(new { success = true, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult AddComment(int musicId, string text)
+        {
+            try
+            {
+                int personId = _userService.GetUserId(usreName);
+                _userService.AddComment(personId, musicId, text);
+                return Json(new { success = true });
+            }
+            catch
+            {
+                return Json(new { success = false });
+            }
+        }
+
+        [HttpGet("ShowComments")]
+        public IActionResult ShowComments(int musicId)
+        {
+            try
+            {
+                var comments = _userService.GetCommentsForMusic(musicId);
+                ViewBag.MusicId = musicId;
+                return View(comments);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return RedirectToAction("Error", "Home");
             }
         }
     }

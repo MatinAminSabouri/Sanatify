@@ -401,5 +401,47 @@ namespace SANATIFY.Services
 
             _appDbContext.ExecuteNonQuery(query, parameters);
         }
+        public void AddComment(int personId, int musicId, string text)
+        {
+            string query = "INSERT INTO Comment_Music (Person_ID, Music_ID, Text) VALUES (@Person_ID, @Music_ID, @Text)";
+            var parameters = new SqlParameter[]
+            {
+                new SqlParameter("@Person_ID", personId),
+                new SqlParameter("@Music_ID", musicId),
+                new SqlParameter("@Text", text)
+            };
+            _appDbContext.ExecuteNonQuery(query, parameters);
+        }
+
+        public List<CommentViewModel> GetCommentsForMusic(int musicId)
+        {
+            string query = @"
+            SELECT cm.ID, cm.Text, p.UserName AS PersonName
+            FROM Comment_Music cm
+            JOIN Person p ON cm.Person_ID = p.ID
+            WHERE cm.Music_ID = @Music_ID
+            ORDER BY cm.ID DESC";
+
+            var parameters = new SqlParameter[]
+            {
+                new SqlParameter("@Music_ID", musicId)
+            };
+
+            DataTable result = _appDbContext.ExecuteQuery(query, parameters);
+            List<CommentViewModel> comments = new List<CommentViewModel>();
+
+            foreach (DataRow row in result.Rows)
+            {
+                comments.Add(new CommentViewModel
+                {
+                    ID = (int)row["ID"],
+                    Text = row["Text"].ToString(),
+                    PersonName = row["PersonName"].ToString()
+                });
+            }
+
+            return comments;
+        }
+        
     }
 }

@@ -1,0 +1,23 @@
+@model List<SANATIFY.Models.CommentViewModel>
+
+@{
+    ViewData["Title"] = "Show Comments";
+}
+
+<div class="container mt-4">
+    <h2>Show Comments for song </h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-12">
+            @foreach (var comment in Model)
+            {
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="color-comment card-title">@comment.PersonName</h5>
+                        <p class="color-comment card-text">@comment.Text</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
