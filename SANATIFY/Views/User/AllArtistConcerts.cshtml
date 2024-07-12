@@ -36,7 +36,7 @@
                     @if (concert.Valid)
                     {
                         <form method="post" asp-action="CancelConcert" asp-controller="User">
-                            <input type="hidden" name="concertId" value="@concert.ID" />
+                            <input type="hidden" name="concertId" value="@concert.ID"/>
                             <button type="submit" class="btn btn-danger">Cancel</button>
                         </form>
                     }
@@ -45,6 +45,7 @@
                         <span>Cancelled</span>
                     }
                 </td>
+
             </tr>
         }
         </tbody>

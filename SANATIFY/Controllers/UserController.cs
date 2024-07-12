@@ -258,20 +258,20 @@ namespace SANATIFY.Controllers
             return concerts;
         }
 
-        [HttpPost]
-        public IActionResult CancelConcert(int concertId)
-        {
-            string query = "UPDATE Concert SET Valid = 0 WHERE ID = @ConcertId AND Person_ID = @Person_ID";
-            var parameters = new[]
-            {
-                new SqlParameter("@ConcertId", concertId),
-                new SqlParameter("@Person_ID", userId)
-            };
-
-            _context.ExecuteNonQuery(query, parameters);
-
-            return RedirectToAction("AllArtistConcerts");
-        }
+        // [HttpPost]
+        // public IActionResult CancelConcert(int concertId)
+        // {
+        //     string query = "UPDATE Concert SET Valid = 0 WHERE ID = @ConcertId AND Person_ID = @Person_ID";
+        //     var parameters = new[]
+        //     {
+        //         new SqlParameter("@ConcertId", concertId),
+        //         new SqlParameter("@Person_ID", userId)
+        //     };
+        //
+        //     _context.ExecuteNonQuery(query, parameters);
+        //
+        //     return RedirectToAction("AllArtistConcerts");
+        // }
 
         [HttpGet]
         public IActionResult AllConcerts()
@@ -552,7 +552,6 @@ namespace SANATIFY.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
                 return RedirectToAction("Error", "Home");
             }
         }
@@ -589,5 +588,21 @@ namespace SANATIFY.Controllers
                 return View(model);
             }
         }
+        [HttpPost]
+        public IActionResult CancelConcert(int concertId)
+        {
+            try
+            {
+                _userService.CancelConcertAndRefund(concertId);
+                TempData["SuccessMessage"] = "Concert cancelled successfully.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Failed to cancel concert. Please try again later.";
+            }
+
+            return RedirectToAction("AllArtistConcerts", "User");
+        }
+
     }
 }

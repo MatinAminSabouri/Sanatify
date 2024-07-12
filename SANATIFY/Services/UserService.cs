@@ -494,11 +494,12 @@ namespace SANATIFY.Services
 
             return musics;
         }
+
         public void AddConcert(int personId, DateTime date, int price)
         {
             string query = @"INSERT INTO Concert (Person_ID, Date, Price)
                              VALUES (@Person_ID, @Date, @Price)";
-            
+
             var parameters = new SqlParameter[]
             {
                 new SqlParameter("@Person_ID", personId),
@@ -507,6 +508,24 @@ namespace SANATIFY.Services
             };
 
             _appDbContext.ExecuteNonQuery(query, parameters);
+        }
+
+        public void CancelConcertAndRefund(int concertId)
+        {
+            try
+            {
+                var parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@ConcertId", concertId)
+                };
+                Console.WriteLine("We are in cancle");
+                var result = _appDbContext.ExecuteNonQuery("CancelConcertAndRefundTheUsers @ConcertId", parameters);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw new ApplicationException("Failed to cancel concert and refund tickets.", ex);
+            }
         }
     }
 }
