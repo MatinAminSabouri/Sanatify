@@ -88,7 +88,6 @@ namespace SANATIFY.Controllers
                 if (result.Rows.Count > 0 && (int)result.Rows[0][0] > 0)
                 {
                     userId = _userService.GetUserId(model.Username);
-                    Console.WriteLine(usreName, passWord, userId);
                     int kindUser = _userService.GetUserKindId(model.Username, model.Password);
                     if (kindUser == 2)
                     {
